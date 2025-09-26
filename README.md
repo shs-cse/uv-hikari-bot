@@ -17,7 +17,7 @@
   ``` -->
 
 # Setup Server (New Semester)
-- Create folder (say `fall25`), enter it, `git clone` repo and skip updates for `info.jsonc`:
+- Create folder (say `fall25`), enter it, `git clone` repo and skip updates for `info.toml`:
   ```sh
   mkdir fall25 && cd $_ && git clone https://github.com/shs-cse/uv-hikari-bot.git . && git update-index --skip-worktree info.toml
   ```
@@ -28,7 +28,15 @@
 
 # Setup Bot
 - Invite bot to server
-- Give `@bot` role to the bot
+- Give [`@bot`](.) role to the bot
 
 # Dev Notes
-- info.toml unskip
+## How to update [`info.toml`](./info.toml) file pattern in `git`
+- Don't track changes in the file:
+    ```bash
+    git update-index --skip-worktree info.toml
+    ```
+- Track changes in the file again:
+    ```bash
+    git update-index --no-skip-worktree info.toml
+    ```

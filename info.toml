@@ -10,8 +10,8 @@ enrolment_and_marks_folder_id = ""
 routine_sheet_id = ""
 
 # Discord IDs
-server_id = ""
-bot_token = ""
+discord_server_id = ""
+discord_bot_token = ""
 
 # [ Auto-generated ]
 # The remaining parts are managed by the bot.
