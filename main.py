@@ -1,17 +1,17 @@
-import crescent
-import hikari
+from bot_environment import state
+import sys, warnings
+from setup_validation.toml_inputs import check_and_load_info
 
-bot = hikari.GatewayBot("YOUR_TOKEN")
-client = crescent.Client(bot)
 
-# Include the command in your client - don't forget this
-@client.include
-# Create a slash command
-@crescent.command(name="say")
-class Say:
-    word = crescent.option(str, "The word to say")
+def main() -> None:
+    # check if `-d` flag was used `python -dO main.py`
+    state.is_debug = "d" in sys.orig_argv[1]
+    # ignore pygsheets warnings in normal mode
+    if not state.is_debug:
+        warnings.simplefilter("ignore")
+    # validate and update state.info
+    check_and_load_info()
 
-    async def callback(self, ctx: crescent.Context) -> None:
-        await ctx.respond(self.word)
 
-bot.run()
+if __name__ == "__main__":
+    main()

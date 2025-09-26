@@ -16,7 +16,7 @@ bot_token = ""
 # [ Auto-generated ]
 # The remaining parts are managed by the bot.
 # Please do not change anything unless you know what you are doing.
-discord_invite = ""
+discord_invite_link = ""
 enrolment_sheet_id = ""
 marks_enabled = false
 
