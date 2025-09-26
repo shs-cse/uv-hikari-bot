@@ -9,8 +9,7 @@
   ```
 - Install `uv` for `python` management:
   ```sh
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  source ~/.bashrc
+  curl -LsSf https://astral.sh/uv/install.sh | sh && source ~/.bashrc
   ```
   <!-- or
   ```sh
