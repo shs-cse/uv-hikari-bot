@@ -1,3 +1,7 @@
+import tomlkit
+from bot_environment import state
+from bot_environment.config import FilePath
+
 class FormatText:
     """
     Use ANSI color codes/graphics mode to emphasize changes
@@ -51,3 +55,17 @@ class FormatText:
     @staticmethod
     def bold(text: str) -> str:
         return f"{FormatText.BOLD}{text}{FormatText.DIM_BOLD_RESET}"
+
+
+def update_info_key(key: str, new_value) -> None: # noqa:ANN001
+    old_value = state.info[key]
+    if old_value == new_value:
+        return
+    state.info[key] = new_value
+    info_toml_path = FilePath.INFO_TOML
+    with open(info_toml_path) as fp:
+        tomlkit.dump(state.info, fp)
+        log = f'{info_toml_path} > "{key}": updated...\n'
+        log += FormatText.dim(f'\t- {"from:":>8}  {old_value}\n')
+        log += FormatText.bold(f'\t+ {"to:":>8}  {new_value}')
+        print(FormatText.warning(log))

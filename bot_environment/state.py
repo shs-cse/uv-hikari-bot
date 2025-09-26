@@ -3,6 +3,6 @@ import pandas as pd
 
 miru_client: miru.Client | None = None
 is_debug: bool = False
-info: tomlkit.TOMLDocument = {}
+info: tomlkit.TOMLDocument = None
 
 students: pd.DataFrame = pd.DataFrame()
