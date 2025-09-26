@@ -27,8 +27,8 @@ class InfoField:
     MARKS_FOLDER_ID = "enrolment_and_marks_folder_id"
     ROUTINE_SHEET_ID = "routine_sheet_id"
     # ST_SHEET_ID = "st_sheet_id"
-    GUILD_ID = "server_id"
-    BOT_TOKEN = "bot_token"
+    GUILD_ID = "discord_server_id"
+    BOT_TOKEN = "discord_bot_token"
     # auto-generated fields
     INVITE_LINK = "discord_invite_link"
     ENROLMENT_SHEET_ID = "enrolment_sheet_id"
