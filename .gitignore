@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Credentials and info
+*.json
+*_info.jsonc
