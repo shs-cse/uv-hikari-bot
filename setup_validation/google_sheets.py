@@ -5,6 +5,7 @@ from wrappers.pygs import get_google_client
 from wrappers.pygs import AuthenticationError
 
 def check_google_credentials() -> None:
+    print(FormatText.wait("Checking google credentials..."))
     if not Path(FileName.SHEETS_CREDENTIALS).exists():
         log = f'Sheets credential file "{FileName.SHEETS_CREDENTIALS}" was not found.'
         log += " You will need to log on by clicking on this following link"

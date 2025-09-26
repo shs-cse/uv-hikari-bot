@@ -51,8 +51,8 @@ class FileName:
     COMMANDS_FOLDER = "bot_commands"
     EVENTS_FOLDER = "bot_events"
     BULK_DELETE = f"{COMMANDS_FOLDER}.bulk_delete"
-    DISCORD_WRAPPER = "wrappers.discord"
-    DISCORD_SECTION_VALIDATION = "setup_validation.discord_sec"
+    # DISCORD_WRAPPER = "wrappers.discord"
+    # DISCORD_SECTION_VALIDATION = "setup_validation.discord_sec"
     
 
 class TemplateLink:  # TODO: plural to singular (TemplateLink)
