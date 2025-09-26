@@ -9,6 +9,7 @@ wheels/
 # Virtual environments
 .venv
 
-# Credentials and info
+# Credentials and info backup (if any)
 *.json
-*_info.jsonc
+info_*
+dev.py

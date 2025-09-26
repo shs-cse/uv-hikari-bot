@@ -1,0 +1,27 @@
+# General information about the course
+course_code = ""
+course_title = ""
+semester = ""
+last_section = 0
+missing_sections = []
+
+# Google Drive and Sheets ID
+enrolment_and_marks_folder_id = ""
+routine_sheet_id = ""
+
+# Discord IDs
+server_id = ""
+bot_token = ""
+
+# [ Auto-generated ]
+# The remaining parts are managed by the bot.
+# Please do not change anything unless you know what you are doing.
+discord_invite = ""
+enrolment_sheet_id = ""
+marks_enabled = false
+
+[marks_groups]
+# "shadman.shahriar@bracu.ac.bd" = [1,2]
+
+[marks_sheet_ids]
+# 01 = "asd"

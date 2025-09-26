@@ -1,0 +1,3 @@
+- Get rid of `st_sheet_id` and encorporate with enrolment sheet
+- Change `guild` to server in toml files
+- Faculty nickname update issue
