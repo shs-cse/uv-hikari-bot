@@ -2,29 +2,35 @@
 
 
 
-# Setup Server (First Time)
+# Setup Droplet (First Time)
 - SSH login to the server:
-  ```sh
-  ssh bot-250
-  ```
+    ```sh
+    ssh bot-250
+    ```
 - Install `uv` for `python` management:
-  ```sh
-  command -v uv >/dev/null && echo "uv already installed!" || { curl -LsSf https://astral.sh/uv/install.sh | sh && source ~/.bashrc; }
-  ```
-  <!-- or
-  ```sh
-  command -v uv >/dev/null || { curl -LsSf https://astral.sh/uv/install.sh | sh && source ~/.bashrc; }
-  ``` -->
+    ```sh
+    command -v uv >/dev/null && echo "uv already installed!" || { curl -LsSf https://astral.sh/uv/install.sh | sh && source ~/.bashrc; }
+    ```
+    <!-- or
+    ```sh
+    command -v uv >/dev/null || { curl -LsSf https://astral.sh/uv/install.sh | sh && source ~/.bashrc; }
+    ``` -->
 
-# Setup Server (New Semester)
+# Discord Server (New Semester)
+- Create a new discord server from the following template:
+    ```
+    https://discord.new/pQ2GPFUGSjTB
+    ```
+
+# Setup Droplet (New Semester)
 - Create folder (say `fall25`), enter it, `git clone` repo and skip updates for `info.toml`:
-  ```sh
-  mkdir fall25 && cd $_ && git clone https://github.com/shs-cse/uv-hikari-bot.git . && git update-index --skip-worktree info.toml
-  ```
+    ```sh
+    mkdir fall25 && cd $_ && git clone https://github.com/shs-cse/uv-hikari-bot.git . && git update-index --skip-worktree info.toml
+    ```
 - If `credentials` in a different folder already exists (may be last semester), copy over to the new folder.
-  ```sh
-  cp ../creds-folder/*.json ./
-  ```
+    ```sh
+    cp ../creds-folder/*.json ./
+    ```
 
 # Setup Bot
 - Invite bot to server

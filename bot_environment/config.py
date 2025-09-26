@@ -45,18 +45,6 @@ class RolePermissions:
     FACULTY = STUDENT_TUTOR | Permissions.MANAGE_MESSAGES | Permissions.MODERATE_MEMBERS
     BOT_ADMIN = FACULTY | Permissions.MANAGE_GUILD
     ADMIN = BOT_ADMIN | Permissions.ADMINISTRATOR
-
-
-# class FileName:
-#     GOOGLE_CREDENTIALS = "google_credentials.json"
-#     SHEETS_CREDENTIALS = "sheets.googleapis.com-python.json"
-#     INFO_TOML = "info.toml"
-#     VALID_TOML = "info_valid.toml"
-#     COMMANDS_FOLDER = "bot_commands"
-#     EVENTS_FOLDER = "bot_events"
-#     BULK_DELETE = f"{COMMANDS_FOLDER}.bulk_delete"
-#     # DISCORD_WRAPPER = "wrappers.discord"
-#     # DISCORD_SECTION_VALIDATION = "setup_validation.discord_sec"
     
 
 class FilePath:
@@ -71,8 +59,8 @@ class FilePath:
     # DISCORD_SECTION_VALIDATION = Path("setup_validation.discord_sec")
 
 
-class TemplateLink:  # TODO: plural to singular (TemplateLink)
-    GUILD = "https://discord.new/RVh3qBrGcsxA"
+class TemplateLink:
+    GUILD = "https://discord.new/pQ2GPFUGSjTB"
     ENROLMENT_SHEET = "1NUMv5gDhDoZWmL-PyHsNawquZKY2FXVb8hai7nSh6CY"
     MARKS_SHEET = "1SqQkkIbbsnSGcAbQ8si3UfitUs6b-cFTJ8fit9UoWp8"
 
@@ -83,7 +71,7 @@ class RegexPattern:
     # course details
     COURSE_CODE = r"CSE[0-9]{3}"
     COURSE_NAME = r"(?!<).+"
-    SEMESTER = r"(Fall|Spring|Summer) 20[0-9]{2}"
+    SEMESTER = r"(Fall|Spring|Summer)'[0-9]{2}"
     # student details
     STUDENT_ID = r"([0-9]{8}|[0-9]{10})"
     STUDENT_NICKNAME = r"\[[0-9]{8,10}\].+"
@@ -93,5 +81,85 @@ class RegexPattern:
     GOOGLE_DRIVE_LINK_ID = r"(?<=/)[\w_-]{15,}|^[\w_-]{15,}"
     # discord id
     DISCORD_ID = r"[0-9]{17,19}"
-    DISCORD_BOT_TOKEN = r"^\w{25,}$" # discord keeps changing this...
+    DISCORD_BOT_TOKEN = r"^.{25,}$" # discord keeps changing this...
     # DISCORD_BOT_TOKEN = r'^([MN][\w-]{23,25})\.([\w-]{6})\.([\w-]{27,39})$' 
+    
+    
+    
+# all special channel names in this guild
+class ChannelName:
+    WELCOME = "👏🏻welcome✌🏻"
+    ADMIN_HELP = "💁🏻admin-help"
+    GENERAL_ANNOUNCEMENT = "📣general-announcements"
+    SECTION_CATEGORY = {
+        ClassType.THEORY: "THEORY SECTION {:02d}",
+        ClassType.LAB_A: "LAB SECTION {:02d}A",
+        ClassType.LAB_B: "LAB SECTION {:02d}B",
+    }
+
+
+# all special role names in this guild
+class RoleName:
+    ADMIN = "admin"
+    BOT_ADMIN = "bot-admin"
+    BOT = "bot"
+    FACULTY = "faculty"
+    THEORY_FACULTY = "theory-faculty"
+    LAB_FACULTY = "lab-faculty"
+    STUDENT_TUTOR = "student-tutor"
+    STUDENT = "student"
+    SECTION = {
+        ClassType.THEORY: "sec-{:02d}",
+        ClassType.LAB_A: "sec-{:02d}A-lab",
+        ClassType.LAB_B: "sec-{:02d}B-lab",
+    }
+    
+
+
+class EnrolmentSprdsht:
+    TITLE = "{course_code} {semester} Enrolment Manager"
+
+    class Meta:
+        TITLE = "Meta"
+        FIELDS_TO_CELLS_DICT = {  # write data to cell
+            "B1": InfoField.SEMESTER,
+            "B2": InfoField.COURSE_CODE,
+            "B3": InfoField.COURSE_NAME,
+            "B4": InfoField.NUM_SECTIONS,
+            "B5": InfoField.MISSING_SECTIONS,
+            "B7": InfoField.ROUTINE_SHEET_ID,
+            "B11": InfoField.ST_SHEET_ID,
+        }
+        FIELDS_FROM_CELLS_DICT = {  # read data from cell
+            InfoField.MARKS_GROUPS: "B14"  # fmt:skip
+        }
+
+    class Students:
+        TITLE = "Students"
+        SECTION_COL = "Section"
+        STUDENT_ID_COL = "Student Id"
+        NAME_COL = "Name"
+        DISCORD_ID_COL = "Discord Id"
+        MARKS_SEC_COL = "Marks Section"
+        ADVISING_DISCORD_ID_COL = "Discord Id (Adv. Verified)"
+
+
+class MarksSprdsht:
+    TITLE = "{course_code}-{sections} Marks Gradesheet {semester}"
+
+    class Meta:
+        TITLE = "Meta"
+        CELL_TO_FILED_DICT = {"K2": InfoField.ENROLMENT_SHEET_ID}
+
+    class SecXX:
+        TITLE = "Sec {:02d}"
+        COL_FOR_STUDENT_IDS = 2
+        ROW_FOR_HEADER = 3
+        HEADER_START = (ROW_FOR_HEADER, COL_FOR_STUDENT_IDS)
+        # TODO: rename
+        ACTUAL_ROW_DATA_START = 100
+        # TODO: remove -(1+ROW_FOR_HEADER)
+        ROW_FOR_PUBLISH_STATUS = 24 - (1 + ROW_FOR_HEADER)
+        ROW_FOR_THIS_COL = 14 - (1 + ROW_FOR_HEADER)
+        ROW_FOR_ALL_CHILDREN = 17 - (1 + ROW_FOR_HEADER)
+        ROW_DATA_START = 100 - (1 + ROW_FOR_HEADER)

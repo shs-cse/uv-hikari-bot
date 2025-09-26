@@ -1,7 +1,10 @@
-from bot_environment.config import FilePath
-from wrappers.utils import FormatText
-from wrappers.pygs import get_google_client
-from wrappers.pygs import AuthenticationError
+from bot_environment import state
+from bot_environment.config import FilePath, InfoField, EnrolmentSprdsht, MarksSprdsht, TemplateLink
+from wrappers import pygs
+from wrappers.utils import FormatText, update_info_key
+from wrappers.pygs import get_google_client, get_spreadsheet, copy_spreadsheet
+from wrappers.pygs import update_cells_from_fields, allow_access, share_with_anyone
+
 
 def check_google_credentials() -> None:
     print(FormatText.wait("Checking google credentials..."))
@@ -16,6 +19,41 @@ def check_google_credentials() -> None:
     except Exception as error:
         log = "Google authorization failed!"
         log += " Did you forget to provide the correct credentials.json file?"
-        raise AuthenticationError(FormatText.error(log)) from error
-    
+        raise pygs.AuthenticationError(FormatText.error(log)) from error
 
+
+def check_spreadsheet_from_id(spreadsheet_id: str) -> None:
+    get_spreadsheet(spreadsheet_id)
+
+
+def check_enrolment_sheet() -> pygs.Spreadsheet:
+    # enrolment id may be empty
+    if enrolment_id := state.info[InfoField.ENROLMENT_SHEET_ID]:
+        enrolment_sheet = get_spreadsheet(enrolment_id)
+    else:
+        # enrolment id not found -> create a new sheet
+        log = f"Enrolment sheet ID is not specified {FilePath.INFO_TOML} file."
+        log += " Creating a new spreadsheet..."
+        print(FormatText.warning(log))
+        spreadsheet_title = EnrolmentSprdsht.TITLE.format(
+            course_code = state.info[InfoField.COURSE_CODE],
+            semester = state.info[InfoField.SEMESTER],
+        )
+        enrolment_sheet = copy_spreadsheet(
+            template_id=TemplateLink.ENROLMENT_SHEET,
+            title=spreadsheet_title,
+            folder_id=state.info[InfoField.MARKS_FOLDER_ID],
+        )
+    # finally update info file
+    update_info_key(InfoField.ENROLMENT_SHEET_ID, enrolment_sheet.id)
+    # update routines and stuff (for both new and old enrolment sheet)
+    update_cells_from_fields(
+        enrolment_sheet,
+        {
+            EnrolmentSprdsht.Meta.TITLE:
+                EnrolmentSprdsht.Meta.FIELDS_TO_CELLS_DICT
+        },
+    )
+    allow_access(enrolment_sheet.id, state.info[InfoField.ROUTINE_SHEET_ID])
+    share_with_anyone(enrolment_sheet)  # also gives it some time to fetch marks groups
+    return enrolment_sheet

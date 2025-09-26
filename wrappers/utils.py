@@ -63,7 +63,7 @@ def update_info_key(key: str, new_value) -> None: # noqa:ANN001
         return
     state.info[key] = new_value
     info_toml_path = FilePath.INFO_TOML
-    with open(info_toml_path) as fp:
+    with open(info_toml_path, 'w') as fp:
         tomlkit.dump(state.info, fp)
         log = f'{info_toml_path} > "{key}": updated...\n'
         log += FormatText.dim(f'\t- {"from:":>8}  {old_value}\n')
