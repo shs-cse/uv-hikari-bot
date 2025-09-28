@@ -25,4 +25,4 @@ marks_enabled = false
 # "shadman.shahriar@bracu.ac.bd" = [1,2]
 
 [marks_sheet_ids]
-# 01 = "asd"
+# 1 = "SHEET_ID" # no leading 0's before section
