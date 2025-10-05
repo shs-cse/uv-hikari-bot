@@ -1,15 +1,15 @@
-- Get rid of `st_sheet_id` and encorporate with enrolment sheet
-- Faculty nickname update issue
-- Change `guild` to server in toml files
-- Section `0` as discord template instead of `1`
-- `str(sec)` may cause issue `f"{sec:02d}"`
+- Faculty nickname update issue (need update cahce)
+- ~~Change `guild` to server in toml files~~
+- ~~Section `0` as discord template instead of `1`~~
+- ~~`str(sec)` may cause issue `f"{sec:02d}"`~~
 - check and keep updating state at the same time
 - add `state.enrolment`
+- check and load st sheet
 
 # Replace names at the very end
-- Change all `FileName`s to `FilePath` variables
-- Change `EEEGuild` to `FacultyGuild`
-- Change `credentials.json` to `google_credentials.json`
+- ~~Change all `FileName`s to `FilePath` variables~~
+- ~~Change `EEEGuild` to `FacultyGuild`~~
+- ~~Change `credentials.json` to `google_credentials.json`~~
 - Change `InfoField` to `InfoKey`
 - Change `InfoField.NUM_SECTIONS` to `InfoKey.LAST_SECTION`
 - Change `update_cells_from_fields`
@@ -19,7 +19,9 @@
 - Change `EnrlmentSprdSht.Students.SECTION_COL` to `THEORY_SECTION_COL`
 - Change `CELL_TO_FIELD_DICT` to `KEYS_AT_CELLS`
 - Change `update_routine/student_list` in `sync/sheets` to `fetch_routine/student_list`
+- Change `get_generic_error_response_while_verifying` to `get_generic_verification_error_response`
 
-# Long tome change
+# Long time change
 - Change `ClassType` to `StrEnum`. But `ALL` poses an issue.
 - Migrate to `gspread` and `gspread-pandas/dataframe` from `pygsheets`
+- Do a `mypy` check

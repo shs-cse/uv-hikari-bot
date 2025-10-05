@@ -3,7 +3,7 @@ from bot_environment import state
 from bot_environment.config import ClassType, RoleName, ChannelName, FacultyGuild
 from wrappers.utils import FormatText
 
-class DiscordClassTypeTemplate():
+class DiscordClassTypeTemplate:
     def __init__(self, role: hikari.Role, 
                  category:hikari.GuildCategory, 
                  channels:list[hikari.PermissibleGuildChannel]) -> None:

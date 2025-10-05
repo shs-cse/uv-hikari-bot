@@ -1,12 +1,14 @@
 import hikari, miru, tomlkit
 import pandas as pd
 from bot_environment.config import ClassType
+from wrappers.pygs import Spreadsheet
 from wrappers.discord import DiscordClassTypeTemplate
 
 miru_client: miru.Client | None = None
 
 info: tomlkit.TOMLDocument | None = None
 
+enrolment: Spreadsheet | None = None
 routine: pd.DataFrame = pd.DataFrame()
 students: pd.DataFrame = pd.DataFrame()
 available_secs: list = []

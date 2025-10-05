@@ -2,9 +2,11 @@ import tomlkit, re
 
 from bot_environment.config import FilePath, InfoField, RegexPattern
 from bot_environment import state
-from setup_validation.google_sheets import check_google_credentials, check_spreadsheet_from_id
-from setup_validation.google_sheets import check_enrolment_sheet
+from setup_validation.google_sheets import check_google_credentials, check_enrolment_sheet
+from setup_validation.google_sheets import check_routine_sheet, check_student_tutor_sheet
 from setup_validation.marks import check_marks_enabled, check_marks_groups_and_sheets
+from setup_validation.marks import load_marks_sections
+from sync_with_state.sheets import pull_from_enrolment, push_marks_section_to_enrolment
 from wrappers.utils import FormatText, update_info_key
 
 
@@ -13,7 +15,7 @@ def has_info_passed_before() -> bool:
         return False
     with open(FilePath.VALID_TOML) as fp:
         passed = tomlkit.load(fp)
-    # matches all values with previously passed toml
+    # matches all values with previously passed toml file
     if all(state.info[key] == passed[key] for key in state.info):
         log = "Check complete! Values match previously passed valid toml."
         print(FormatText.success(log))
@@ -35,17 +37,23 @@ def check_and_load_info() -> None:
     if not has_info_passed_before():
         check_info_keys()
         check_regex_patterns()
-        check_sections(state.info[InfoField.NUM_SECTIONS], state.info[InfoField.MISSING_SECTIONS])
+        check_and_load_sections()
         check_marks_enabled()
-        check_spreadsheet_from_id(state.info[InfoField.ROUTINE_SHEET_ID])
+        check_routine_sheet()
+        check_student_tutor_sheet()
         check_enrolment_sheet()
         check_marks_groups_and_sheets()
         # create valid toml file
         with open(FilePath.VALID_TOML, 'w') as fp:
             tomlkit.dump(state.info, fp)
-        ... # TODO: pull data from sec marksheets, update df_marks_section (and update df_marks costly? also, does it belong here in check info?)
+    # always load after checked
+    load_sections()
+    pull_from_enrolment()
+    load_marks_sections()
+    push_marks_section_to_enrolment()
+    
 
-
+# check functions may access state but can't update it
 # check if info file contains all the fields
 def check_info_keys() -> None:
     for attr, key in vars(InfoField).items():
@@ -91,7 +99,9 @@ def check_regex_patterns() -> None:
 
 
 # check number of sections and missing sections
-def check_sections(last_sec: int, missing_secs: list[int]) -> None:
+def check_and_load_sections() -> None:
+    last_sec = state.info[InfoField.NUM_SECTIONS]
+    missing_secs = state.info[InfoField.MISSING_SECTIONS]
     # make sure positive
     if last_sec <= 0:
         log = "Last section must be a positive integer."
@@ -104,5 +114,16 @@ def check_sections(last_sec: int, missing_secs: list[int]) -> None:
             log += " Change the last section input instead."
             raise ValueError(FormatText.error(log))
     # passed all checks
+    load_sections()
     log = "Number of sections and missing sections seems ok."
     print(FormatText.success(log))
+    
+    
+def load_sections() -> None:
+    # list of available sections (integers)
+    state.available_secs = [
+        sec for sec in range(1, state.info[InfoField.NUM_SECTIONS]+1)
+        if sec not in state.info[InfoField.MISSING_SECTIONS]
+    ]
+    log = FormatText.bold(state.available_secs)
+    print(FormatText.status(f"Available Sections: {log}"))

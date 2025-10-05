@@ -18,8 +18,9 @@ class ClassType:
     LAB_A = "lab_a"
     LAB_B = "lab_b"
     ALL = [THEORY, LAB_A, LAB_B]
-    # ALL = [THEORY, LAB] 
-    ... # TODO: change
+    ...  # TODO: remove
+    if __debug__:
+        ALL = [THEORY, LAB]
 
 
 class InfoField:
@@ -97,10 +98,13 @@ class ChannelName:
         ClassType.THEORY: "Theory Section {:02d}",
         ClassType.LAB_A: "Lab Section {:02d}A",
         ClassType.LAB_B: "Lab Section {:02d}B",
-        # ClassType.THEORY: "SECTION {:02d} THEORY",
-        # ClassType.LAB: "SECTION {:02d} LAB",
     }
-    ... # TODO: change
+    ...  # TODO: remove
+    if __debug__:
+        SECTION_CATEGORY = {
+            ClassType.THEORY: "SECTION {:02d} THEORY",
+            ClassType.LAB: "SECTION {:02d} LAB",
+        }
 
 
 # all special role names in this guild
@@ -117,9 +121,13 @@ class RoleName:
         ClassType.THEORY: "sec-{:02d}",
         ClassType.LAB_A: "sec-{:02d}A-lab",
         ClassType.LAB_B: "sec-{:02d}B-lab",
-        # ClassType.LAB: "sec-{:02d}-lab",
     }
-    ... # TODO: change
+    ...  # TODO: remove
+    if __debug__:
+        SECTION = {
+            ClassType.THEORY: "sec-{:02d}",
+            ClassType.LAB: "sec-{:02d}-lab",
+        }
 
 
 class EnrolmentSprdsht:
@@ -157,10 +165,14 @@ class EnrolmentSprdsht:
             ClassType.THEORY: "Theory Teacher",
             ClassType.LAB: "Lab Teacher",
         }
-    
+
+    class ST:
+        RANGE = "A1"
+        ...  # TODO: incomplete
+
     class Discord:
-        TITLE = 'Discord'
-        RANGE = 'B2:E'
+        TITLE = "Discord"
+        RANGE = "B2:E"
 
 
 class MarksSprdsht:

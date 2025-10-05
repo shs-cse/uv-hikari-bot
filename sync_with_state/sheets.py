@@ -11,11 +11,11 @@ def pull_from_enrolment() -> None:
     print(FormatText.success("Pulled data from enrolment sheet successfully."))
 
 
-def push_to_enrolment() -> None:
-    print(FormatText.wait("Pushing data to enrolment sheet..."))
-    push_marks_section_to_enrolment()
-    push_discord_data_to_enrolment()
-    print(FormatText.success("Pushed data to enrolment sheet successfully."))
+# def push_to_enrolment() -> None:
+#     print(FormatText.wait("Pushing data to enrolment sheet..."))
+#     push_marks_section_to_enrolment()
+#     push_discord_data_to_enrolment()
+#     print(FormatText.success("Pushed data to enrolment sheet successfully."))
 
 
 # fetch routine data from enrolment sheet

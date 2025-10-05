@@ -21,7 +21,7 @@ def check_marks_enabled() -> None:
 
 def check_marks_groups_and_sheets() -> None:
     if not state.info[InfoField.MARKS_ENABLED]:
-        print(FormatText.status("Marks feature is not enabled."))
+        print(FormatText.status("Marks feature is disabled."))
         return
     # fetch marks groups from enrolment and check spreadsheets
     check_marks_groups(state.info[InfoField.ENROLMENT_SHEET_ID])
@@ -38,9 +38,7 @@ def check_marks_groups(enrolment_sheet: Spreadsheet) -> None:
     marks_groups: dict[str, list[int]] = json.loads(marks_groups_str)
     print(FormatText.status(f'"{InfoField.MARKS_GROUPS}": {FormatText.bold(marks_groups)}'))
     # check if all sections in marks groups
-    available_secs = set(range(1, 1 + state.info[InfoField.NUM_SECTIONS]))
-    available_secs -= set(state.info[InfoField.MISSING_SECTIONS])
-    if available_secs != {sec for group in marks_groups.values() for sec in group}:
+    if set(state.available_secs) != {sec for group in marks_groups.values() for sec in group}:
         log = "Marks groups contain sections that does not exist in"
         log += f" {meta_wrksht.url}&range={marks_groups_cell}"
         raise ValueError(FormatText.error(log))
@@ -61,8 +59,7 @@ def check_marks_sheet(sec: int, email: str, group: list[int]) -> None:
     update_info_key(InfoField.MARKS_SHEET_IDS, marks_ids)
     log = f'Section {sec:02d} > Marks spreadsheet: "{spreadsheet.title}"'
     print(FormatText.success(log))
-    sec_sheet = get_or_create_marks_worksheet(spreadsheet, sec)
-    update_marks_section(sec_sheet, sec)
+    get_or_create_marks_worksheet(spreadsheet, sec)
 
 
 # create a spreadsheet that will contain marks for several sections
@@ -121,10 +118,17 @@ def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> 
     sec_sheet.set_dataframe(
         sec_students[[EnrolmentSprdsht.Students.NAME_COL]], start=start_cell, copy_index=True
     )
-
-
-# update both in state.students and enrolment
-def update_marks_section(sec_sheet: Worksheet, marks_sec: int) -> None:
+    
+    
+def load_marks_sections() -> None:
+    for sec in state.available_secs:
+        load_marks_section(sec)
+    
+    
+def load_marks_section(marks_sec: int) -> None:
+    spreadsheet = get_spreadsheet(state.info[InfoField.MARKS_SHEET_IDS][str(marks_sec)])
+    sec_sheet = get_or_create_marks_worksheet(spreadsheet, marks_sec)
+    # update both in state.students and enrolment
     if state.students.empty:
         return
     start_cell = (MarksSprdsht.SecXX.ACTUAL_ROW_DATA_START, MarksSprdsht.SecXX.COL_FOR_STUDENT_IDS)

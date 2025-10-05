@@ -23,11 +23,13 @@ def check_google_credentials() -> None:
         raise pygs.AuthenticationError(FormatText.error(log)) from error
 
 
-def check_spreadsheet_from_id(spreadsheet_id: str) -> None:
-    get_spreadsheet(spreadsheet_id)
+def check_routine_sheet() -> None:
+    get_spreadsheet(state.info[InfoField.ROUTINE_SHEET_ID])
+    
+def check_student_tutor_sheet() -> None:
+    get_spreadsheet(state.info[InfoField.ST_SHEET_ID])
 
-
-def check_enrolment_sheet() -> Spreadsheet:
+def check_enrolment_sheet() -> None:
     # enrolment id may be empty
     if enrolment_id := state.info[InfoField.ENROLMENT_SHEET_ID]:
         enrolment_sheet = get_spreadsheet(enrolment_id)
@@ -53,5 +55,5 @@ def check_enrolment_sheet() -> Spreadsheet:
         {EnrolmentSprdsht.Meta.TITLE: EnrolmentSprdsht.Meta.FIELDS_TO_CELLS_DICT},
     )
     allow_access(enrolment_sheet.id, state.info[InfoField.ROUTINE_SHEET_ID])
+    allow_access(enrolment_sheet.id, state.info[InfoField.ST_SHEET_ID])
     share_with_anyone(enrolment_sheet)  # also gives it some time to fetch marks groups
-    return enrolment_sheet

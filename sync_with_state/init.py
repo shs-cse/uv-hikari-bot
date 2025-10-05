@@ -27,15 +27,6 @@ async def now(e: hikari.StartedEvent) -> None:
         log = FormatText.bold(f"@{RoleName.BOT}")
         log = f"Bot Role: {log} has been added by admin."
         print(FormatText.status(log))
-    # list of available sections (integers)
-    last_sec = state.info[InfoField.NUM_SECTIONS]
-    missing_secs = state.info[InfoField.MISSING_SECTIONS]
-    state.available_secs = [
-        sec for sec in range(1, last_sec+1)
-        if sec not in missing_secs
-    ]
-    log = FormatText.bold(state.available_secs)
-    print(FormatText.status(f"Available Sections: {log}"))
     # create invite link from welcome channel if not found
     if not state.info[InfoField.INVITE_LINK]:
         welcome = get_channel_by_name(ChannelName.WELCOME)
