@@ -82,10 +82,11 @@ def get_sheet_by_name(
 # get complete sheet data as pandas dataframe
 def get_sheet_data(
     spreadsheet_obj_or_id: Spreadsheet | str, 
-    worksheet_title: str
+    worksheet_title: str,
+    **kwargs: dict
 ) -> pd.DataFrame | bool:
     worksheet = get_sheet_by_name(spreadsheet_obj_or_id, worksheet_title)
-    return worksheet.get_as_df()
+    return worksheet.get_as_df(**kwargs)
 
 
 # share spreadsheet publicly
@@ -134,7 +135,7 @@ def copy_spreadsheet(template_id: str, title: str, folder_id: str) -> Spreadshee
 def update_sheet_values(
     cell_value_dict: dict,
     worksheet: pygsheets.Worksheet | None = None,
-    *,
+    /,
     spreadsheet_id: str | None = None,
     worksheet_title: str | None = None,
 ) -> None:

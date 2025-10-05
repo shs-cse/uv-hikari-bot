@@ -14,9 +14,12 @@ class SpecialChars:
 
 class ClassType:
     THEORY = "theory"
+    LAB = "lab"
     LAB_A = "lab_a"
     LAB_B = "lab_b"
     ALL = [THEORY, LAB_A, LAB_B]
+    # ALL = [THEORY, LAB] 
+    ... # TODO: change
 
 
 class InfoField:
@@ -45,7 +48,7 @@ class RolePermissions:
     FACULTY = STUDENT_TUTOR | Permissions.MANAGE_MESSAGES | Permissions.MODERATE_MEMBERS
     BOT_ADMIN = FACULTY | Permissions.MANAGE_GUILD
     ADMIN = BOT_ADMIN | Permissions.ADMINISTRATOR
-    
+
 
 class FilePath:
     GOOGLE_CREDENTIALS = Path("google_credentials.json")
@@ -61,8 +64,8 @@ class FilePath:
 
 class TemplateLink:
     GUILD = "https://discord.new/pQ2GPFUGSjTB"
-    ENROLMENT_SHEET = "1NUMv5gDhDoZWmL-PyHsNawquZKY2FXVb8hai7nSh6CY"
-    MARKS_SHEET = "1SqQkkIbbsnSGcAbQ8si3UfitUs6b-cFTJ8fit9UoWp8"
+    ENROLMENT_SHEET = "1m8Ule-fekFIz-3T4frEm6Q6p9AEOIFeMIg_OWr1ILlk"
+    MARKS_SHEET = "1KdZeFEalvWJtOxvCzUcqqVw_L3IBlsQjys97fKC3n-c"
 
 
 class RegexPattern:
@@ -81,21 +84,23 @@ class RegexPattern:
     GOOGLE_DRIVE_LINK_ID = r"(?<=/)[\w_-]{15,}|^[\w_-]{15,}"
     # discord id
     DISCORD_ID = r"[0-9]{17,19}"
-    DISCORD_BOT_TOKEN = r"^.{25,}$" # discord keeps changing this...
-    # DISCORD_BOT_TOKEN = r'^([MN][\w-]{23,25})\.([\w-]{6})\.([\w-]{27,39})$' 
-    
-    
-    
+    DISCORD_BOT_TOKEN = r"^.{25,}$"  # discord keeps changing this...
+    # DISCORD_BOT_TOKEN = r'^([MN][\w-]{23,25})\.([\w-]{6})\.([\w-]{27,39})$'
+
+
 # all special channel names in this guild
 class ChannelName:
     WELCOME = "👏🏻welcome✌🏻"
     ADMIN_HELP = "💁🏻admin-help"
     GENERAL_ANNOUNCEMENT = "📣general-announcements"
     SECTION_CATEGORY = {
-        ClassType.THEORY: "THEORY SECTION {:02d}",
-        ClassType.LAB_A: "LAB SECTION {:02d}A",
-        ClassType.LAB_B: "LAB SECTION {:02d}B",
+        ClassType.THEORY: "Theory Section {:02d}",
+        ClassType.LAB_A: "Lab Section {:02d}A",
+        ClassType.LAB_B: "Lab Section {:02d}B",
+        # ClassType.THEORY: "SECTION {:02d} THEORY",
+        # ClassType.LAB: "SECTION {:02d} LAB",
     }
+    ... # TODO: change
 
 
 # all special role names in this guild
@@ -112,8 +117,9 @@ class RoleName:
         ClassType.THEORY: "sec-{:02d}",
         ClassType.LAB_A: "sec-{:02d}A-lab",
         ClassType.LAB_B: "sec-{:02d}B-lab",
+        # ClassType.LAB: "sec-{:02d}-lab",
     }
-    
+    ... # TODO: change
 
 
 class EnrolmentSprdsht:
@@ -136,12 +142,25 @@ class EnrolmentSprdsht:
 
     class Students:
         TITLE = "Students"
-        SECTION_COL = "Section"
+        SECTION_COL = "Theory Section"
+        LAB_SECTION_COL = "Lab Section"
         STUDENT_ID_COL = "Student Id"
         NAME_COL = "Name"
         DISCORD_ID_COL = "Discord Id"
         MARKS_SEC_COL = "Marks Section"
         ADVISING_DISCORD_ID_COL = "Discord Id (Adv. Verified)"
+
+    class Routine:
+        TITLE = "Routine"
+        SECTION_COL = "Section"
+        CLASS_TYPE_FACULTY_COL = {
+            ClassType.THEORY: "Theory Teacher",
+            ClassType.LAB: "Lab Teacher",
+        }
+    
+    class Discord:
+        TITLE = 'Discord'
+        RANGE = 'B2:E'
 
 
 class MarksSprdsht:
@@ -149,7 +168,7 @@ class MarksSprdsht:
 
     class Meta:
         TITLE = "Meta"
-        CELL_TO_FILED_DICT = {"K2": InfoField.ENROLMENT_SHEET_ID}
+        CELL_TO_FIELD_DICT = {"K2": InfoField.ENROLMENT_SHEET_ID}
 
     class SecXX:
         TITLE = "Sec {:02d}"

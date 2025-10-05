@@ -7,10 +7,14 @@
     ```sh
     ssh bot-250
     ```
-- Install `uv` for `python` management:
+- Install `uv` for `python` management (one line command):
+    ```sh
+    command -v uv >/dev/null && echo "uv already installed!" || { curl -LsSf https://astral.sh/uv/install.sh | sh && grep -q "alias uvo=" ~/.bashrc || echo "alias uvo='PYTHONOPTIMIZE=2 uv'" >> ~/.bashrc; source ~/.bashrc; }
+    ```
+    <!-- or
     ```sh
     command -v uv >/dev/null && echo "uv already installed!" || { curl -LsSf https://astral.sh/uv/install.sh | sh && source ~/.bashrc; }
-    ```
+    ```-->
     <!-- or
     ```sh
     command -v uv >/dev/null || { curl -LsSf https://astral.sh/uv/install.sh | sh && source ~/.bashrc; }
@@ -31,6 +35,11 @@
     ```sh
     cp ../creds-folder/*.json ./
     ```
+- Run bot
+    ```sh
+    uvo run main.py
+    ```
+    - Equivalent to `uv run python -OO main.py`
 
 # Setup Bot
 - Invite bot to server
@@ -45,4 +54,13 @@
 - Track changes in the file again:
     ```bash
     git update-index --no-skip-worktree info.toml
+    ```
+## Python debugging
+- Run in debug mode with no optimization level:
+    ```sh
+    uv run main.py
+    ```
+- Add breakpoints in code:
+    ```py
+    if __debug__: breakpoint()
     ```

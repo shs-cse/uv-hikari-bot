@@ -1,16 +1,48 @@
+import hikari, crescent, miru
+import hikari.errors
 from bot_environment import state
-import sys, warnings
+from bot_environment.config import InfoField, FilePath
+import warnings
 from setup_validation.toml_inputs import check_and_load_info
+from wrappers.utils import FormatText
 
 
 def main() -> None:
-    # check if `-d` flag was used `python -dO main.py`
-    state.is_debug = "d" in sys.orig_argv[1]
     # ignore pygsheets warnings in normal mode
-    if not state.is_debug:
+    if __debug__:
+        print(FormatText.warning("Code is running in debug mode."))
+    else:
         warnings.simplefilter("ignore")
     # validate and update state.info
     check_and_load_info()
+    # hikari + crescent -> create bot and client
+    bot = hikari.GatewayBot(
+        state.info[InfoField.BOT_TOKEN],
+        intents=hikari.Intents.ALL,
+        logs="INFO" if __debug__ else "WARNING",
+    )
+    this_guild_id = int(state.info[InfoField.GUILD_ID])
+    client = crescent.Client(bot, default_guild=this_guild_id)
+    client.plugins.load_folder(FilePath.EVENTS_FOLDER.name)
+    ...  # TODO: incomplete
+    # initialize miru for managing buttons and forms
+    state.miru_client = miru.Client(bot)
+    # run the bot
+    try:
+        bot.run(
+            # enable asyncio debug to detect blocking and slow code.
+            asyncio_debug=__debug__,
+            # enable coroutine tracking, makes some asyncio errors clearer.
+            coroutine_tracking_depth=20 if __debug__ else None,
+            # initial discord status of the bot
+            status=hikari.Status.IDLE,
+        )
+    except hikari.errors.UnauthorizedError as autherror:
+        log = FormatText.error(
+            "Bot authorization failed. Please check "
+            + f"{FilePath.INFO_TOML} > '{InfoField.BOT_TOKEN}'"
+        )
+        raise Exception(log) from autherror
 
 
 if __name__ == "__main__":

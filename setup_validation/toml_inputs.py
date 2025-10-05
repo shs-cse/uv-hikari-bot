@@ -4,26 +4,27 @@ from bot_environment.config import FilePath, InfoField, RegexPattern
 from bot_environment import state
 from setup_validation.google_sheets import check_google_credentials, check_spreadsheet_from_id
 from setup_validation.google_sheets import check_enrolment_sheet
+from setup_validation.marks import check_marks_enabled, check_marks_groups_and_sheets
 from wrappers.utils import FormatText, update_info_key
 
 
 def has_info_passed_before() -> bool:
-    valid_toml_path = FilePath.VALID_TOML
-    if not valid_toml_path.exists():
+    if not FilePath.VALID_TOML.exists():
         return False
-    with open(valid_toml_path, 'r+') as fp:
+    with open(FilePath.VALID_TOML) as fp:
         passed = tomlkit.load(fp)
-        # matches all values with previously passed toml
-        if all(state.info[key] == passed[key] for key in state.info):
-            log = "Check complete! Values match previously passed valid toml."
-            print(FormatText.success(log))
-            # update valid toml file (e.g. comments)
+    # matches all values with previously passed toml
+    if all(state.info[key] == passed[key] for key in state.info):
+        log = "Check complete! Values match previously passed valid toml."
+        print(FormatText.success(log))
+        # update valid toml file (e.g. comments)
+        with open(FilePath.VALID_TOML, 'w') as fp:
             tomlkit.dump(state.info, fp)
-            return True
+        return True
     # mismatch -> needs checking each field
     print(FormatText.warning("Needs checking every json input field..."))
     # remove valid file
-    valid_toml_path.unlink()
+    FilePath.VALID_TOML.unlink()
     return False
 
 
@@ -38,7 +39,11 @@ def check_and_load_info() -> None:
         check_marks_enabled()
         check_spreadsheet_from_id(state.info[InfoField.ROUTINE_SHEET_ID])
         check_enrolment_sheet()
-        ...
+        check_marks_groups_and_sheets()
+        # create valid toml file
+        with open(FilePath.VALID_TOML, 'w') as fp:
+            tomlkit.dump(state.info, fp)
+        ... # TODO: pull data from sec marksheets, update df_marks_section (and update df_marks costly? also, does it belong here in check info?)
 
 
 # check if info file contains all the fields
@@ -47,7 +52,7 @@ def check_info_keys() -> None:
         # skip private variables/attributes
         if attr.startswith("_"):
             continue
-        # check if every fieldname exists in info
+        # check if every toml key exists in info file
         if key not in state.info:
             log = f'{FilePath.INFO_TOML} file does not contain the key: "{key}".'
             raise LookupError(FormatText.error(log))
@@ -101,13 +106,3 @@ def check_sections(last_sec: int, missing_secs: list[int]) -> None:
     # passed all checks
     log = "Number of sections and missing sections seems ok."
     print(FormatText.success(log))
-    
-    
-# check if marks_enabled has boolean values or not
-def check_marks_enabled() -> None:
-    if not isinstance(state.info[InfoField.MARKS_ENABLED], bool):
-        log = 'Marks enabled must be a boolean value: "true" or "false".'
-        raise TypeError(FormatText.error(log))
-    # validated marks enabled
-    log = "enabled" if state.info[InfoField.MARKS_ENABLED] else "disabled"
-    print(FormatText.success(f"Marks spreadsheets are {log} for all sections."))

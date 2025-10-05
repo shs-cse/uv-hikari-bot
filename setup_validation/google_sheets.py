@@ -1,7 +1,8 @@
 from bot_environment import state
-from bot_environment.config import FilePath, InfoField, EnrolmentSprdsht, MarksSprdsht, TemplateLink
+from bot_environment.config import FilePath, InfoField, EnrolmentSprdsht, TemplateLink
 from wrappers import pygs
 from wrappers.utils import FormatText, update_info_key
+from wrappers.pygs import Spreadsheet
 from wrappers.pygs import get_google_client, get_spreadsheet, copy_spreadsheet
 from wrappers.pygs import update_cells_from_fields, allow_access, share_with_anyone
 
@@ -26,7 +27,7 @@ def check_spreadsheet_from_id(spreadsheet_id: str) -> None:
     get_spreadsheet(spreadsheet_id)
 
 
-def check_enrolment_sheet() -> pygs.Spreadsheet:
+def check_enrolment_sheet() -> Spreadsheet:
     # enrolment id may be empty
     if enrolment_id := state.info[InfoField.ENROLMENT_SHEET_ID]:
         enrolment_sheet = get_spreadsheet(enrolment_id)
@@ -49,10 +50,7 @@ def check_enrolment_sheet() -> pygs.Spreadsheet:
     # update routines and stuff (for both new and old enrolment sheet)
     update_cells_from_fields(
         enrolment_sheet,
-        {
-            EnrolmentSprdsht.Meta.TITLE:
-                EnrolmentSprdsht.Meta.FIELDS_TO_CELLS_DICT
-        },
+        {EnrolmentSprdsht.Meta.TITLE: EnrolmentSprdsht.Meta.FIELDS_TO_CELLS_DICT},
     )
     allow_access(enrolment_sheet.id, state.info[InfoField.ROUTINE_SHEET_ID])
     share_with_anyone(enrolment_sheet)  # also gives it some time to fetch marks groups
