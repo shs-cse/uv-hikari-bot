@@ -2,7 +2,6 @@ from bot_environment import state
 from bot_environment.config import FilePath, InfoField, EnrolmentSprdsht, TemplateLink
 from wrappers import pygs
 from wrappers.utils import FormatText, update_info_key
-from wrappers.pygs import Spreadsheet
 from wrappers.pygs import get_google_client, get_spreadsheet, copy_spreadsheet
 from wrappers.pygs import update_cells_from_fields, allow_access, share_with_anyone
 

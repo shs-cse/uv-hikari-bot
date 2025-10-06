@@ -42,7 +42,10 @@
     - Equivalent to `uv run python -OO main.py`
 
 # Setup Bot
-- Invite bot to server
+- Invite bot to server (installation link looks like this):
+    `
+    https://discord.com/oauth2/authorize?client_id=...
+    `
 - Give [`@bot`](.) role to the bot
 
 # Dev Notes

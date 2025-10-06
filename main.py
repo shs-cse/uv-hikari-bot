@@ -24,6 +24,7 @@ def main() -> None:
     this_guild_id = int(state.info[InfoField.GUILD_ID])
     client = crescent.Client(bot, default_guild=this_guild_id)
     client.plugins.load_folder(FilePath.EVENTS_FOLDER.name)
+    client.plugins.load_folder(FilePath.COMMANDS_FOLDER.name)
     ...  # TODO: incomplete
     # initialize miru for managing buttons and forms
     state.miru_client = miru.Client(bot)

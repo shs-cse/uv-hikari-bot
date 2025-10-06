@@ -7,7 +7,7 @@ from wrappers.utils import FormatText
 
 
 # check if all sections' roles and channels are in server
-async def check_or_create_discord_sec(event: hikari.StartedEvent) -> None:
+async def check_or_create_discord_sec() -> None:
     # iterate over available theory & lab sections
     for class_type in ClassType.ALL:
         for sec in state.available_secs:
@@ -16,28 +16,28 @@ async def check_or_create_discord_sec(event: hikari.StartedEvent) -> None:
                 state.sec_roles[sec] = {}
             state.sec_roles[sec][class_type] = role
             if role is None:
-                role = await create_sec_role(event, sec, class_type)
+                role = await create_sec_role(sec, class_type)
             category = get_sec_category(sec, class_type)
             if category is None:
                 category = await create_sec_category(sec, class_type, role)
 
 
 async def create_sec_role(
-    event: hikari.StartedEvent, section: int, class_type: ClassType
+    section: int, class_type: ClassType
 ) -> hikari.Role:
     template_role = get_sec_role(0, class_type)
     role_name = get_sec_role_name(section, class_type)
-    new_role = await create_role_from_template(event, role_name, template_role)
+    new_role = await create_role_from_template(role_name, template_role)
     return new_role
 
 
 # clone role with new name
 async def create_role_from_template(
-    event: hikari.StartedEvent, role_name: str, template_role: hikari.Role
+    role_name: str, template_role: hikari.Role
 ) -> hikari.Role:
     log = FormatText.bold("@" + role_name)
     print(FormatText.warning(f"Creating {log} role..."))
-    new_role = await event.app.rest.create_role(
+    new_role = await state.guild.app.rest.create_role(
         state.guild,
         name=role_name,
         permissions=template_role.permissions,
@@ -115,7 +115,7 @@ async def create_channel_from_template(
     new_channel: hikari.PermissibleGuildChannel = await create_channel_func(
         name=new_channel_name, permission_overwrites=template_channel.permission_overwrites.values()
     )
-    await new_channel.edit(parent_category=parent_category)
+    new_channel = await new_channel.edit(parent_category=parent_category)
 
     # copy permission overwrite from template to new role
     permission_overwrite = new_channel.permission_overwrites[template_role.id]

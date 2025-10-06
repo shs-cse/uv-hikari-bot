@@ -3,6 +3,7 @@ from bot_environment import state
 from bot_environment.config import ClassType, RoleName, ChannelName, FacultyGuild
 from wrappers.utils import FormatText
 
+
 class DiscordClassTypeTemplate:
     def __init__(self, role: hikari.Role, 
                  category:hikari.GuildCategory, 
@@ -13,14 +14,13 @@ class DiscordClassTypeTemplate:
     
 
 
-async def fetch_invite_link(event: hikari.StartedEvent,
-                            channel: hikari.GuildTextChannel) -> str:
-    invites = await event.app.rest.fetch_channel_invites(channel)
+async def fetch_invite_link(channel: hikari.GuildTextChannel) -> str:
+    invites = await state.guild.app.rest.fetch_channel_invites(channel)
     for invite in invites:
         # infinite useage and infinite timelimit
         if invite.max_age is None and invite.max_uses is None:
             return str(invite)
-    new_invite = await event.app.rest.create_invite(channel, max_age=0, max_uses=0)
+    new_invite = await state.guild.app.rest.create_invite(channel, max_age=0, max_uses=0)
     return str(new_invite)
 
 
@@ -76,7 +76,6 @@ async def fetch_guild_from_id(event: hikari.StartedEvent,
 
 # cache get methods by using fetch methods occasionally
 async def update_guild_cache(
-    event: hikari.StartedEvent,
     guild: hikari.Guild | None = None,
     members: bool = True,
     roles: bool = True,
@@ -86,11 +85,11 @@ async def update_guild_cache(
         guild = state.guild
     print(FormatText.wait("Updating guild data cache..."))
     if members:
-        await event.app.rest.fetch_members(guild)
+        await guild.app.rest.fetch_members(guild)
     if roles:
-        await event.app.rest.fetch_roles(guild)
+        await guild.app.rest.fetch_roles(guild)
     if channels:
-        await event.app.rest.fetch_guild_channels(guild)
+        await guild.app.rest.fetch_guild_channels(guild)
     print(FormatText.success(f"Cache Updated: {FormatText.bold(guild)} guild's data"))
 
 
@@ -113,4 +112,4 @@ def get_role_by_name(name: str) -> hikari.Role | None:
 
 
 # async def fetch_member_by_id(guild: hikari.Guild, id_or_user: hikari.Snowflakeish):
-#     await event.app.rest.fetch_member(guild, id_or_user)
+#     await guild.app.rest.fetch_member(guild, id_or_user)

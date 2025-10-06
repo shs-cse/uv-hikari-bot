@@ -1,7 +1,7 @@
 import json
 from bot_environment import state
 from bot_environment.config import InfoField, EnrolmentSprdsht, MarksSprdsht, TemplateLink
-from sync_with_state.sheets import push_marks_section_to_enrolment
+from sync_with_state.sheets import update_student_list, push_marks_section_to_enrolment
 from wrappers.utils import FormatText, update_info_key
 from wrappers.pygs import Spreadsheet, Worksheet, WorksheetNotFound
 from wrappers.pygs import get_spreadsheet, copy_spreadsheet, get_sheet_by_name
@@ -42,11 +42,11 @@ def check_marks_groups(enrolment_sheet: Spreadsheet) -> None:
         log = "Marks groups contain sections that does not exist in"
         log += f" {meta_wrksht.url}&range={marks_groups_cell}"
         raise ValueError(FormatText.error(log))
-    # update info json
+    # update info toml
     update_info_key(InfoField.MARKS_GROUPS, marks_groups)
 
 
-def check_marks_sheet(sec: int, email: str, group: list[int]) -> None:
+def check_marks_sheet(sec: int, email: str, group: list[int]) -> Worksheet:
     marks_ids = state.info[InfoField.MARKS_SHEET_IDS].copy()  # TODO: why copy?
     # fetch or create spreadsheet
     if marks_ids.get(str(sec), ""):  # key may not exist or value may be ""
@@ -59,7 +59,7 @@ def check_marks_sheet(sec: int, email: str, group: list[int]) -> None:
     update_info_key(InfoField.MARKS_SHEET_IDS, marks_ids)
     log = f'Section {sec:02d} > Marks spreadsheet: "{spreadsheet.title}"'
     print(FormatText.success(log))
-    get_or_create_marks_worksheet(spreadsheet, sec)
+    return get_or_create_marks_worksheet(spreadsheet, sec)
 
 
 # create a spreadsheet that will contain marks for several sections
@@ -97,6 +97,7 @@ def get_or_create_marks_worksheet(spreadsheet: Spreadsheet, sec: int) -> Workshe
 
 
 def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> None:
+    update_student_list()
     if state.students.empty:
         log = "Can't populate because no student in Enrolment sheet."
         log += " (at least no student in local data `state.students`)"
@@ -121,13 +122,19 @@ def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> 
     
     
 def load_marks_sections() -> None:
+    if not state.info[InfoField.MARKS_ENABLED]:
+        return
+    # refresh all marks section column entry
+    state.students[EnrolmentSprdsht.Students.MARKS_SEC_COL] = 0
     for sec in state.available_secs:
         load_marks_section(sec)
     
     
 def load_marks_section(marks_sec: int) -> None:
-    spreadsheet = get_spreadsheet(state.info[InfoField.MARKS_SHEET_IDS][str(marks_sec)])
-    sec_sheet = get_or_create_marks_worksheet(spreadsheet, marks_sec)
+    for email, group in state.info['marks_groups'].items(): 
+        if marks_sec in group: 
+            break
+    sec_sheet = check_marks_sheet(marks_sec, email, group)
     # update both in state.students and enrolment
     if state.students.empty:
         return

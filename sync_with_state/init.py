@@ -14,8 +14,8 @@ async def now(e: hikari.StartedEvent) -> None:
     state.guild = await fetch_guild_from_id(e, this_guild_id)
     state.eee_guild = await fetch_guild_from_id(e, FacultyGuild.Id)
     # update cache of list of members, roles and channels
-    await update_guild_cache(e)
-    await update_guild_cache(e, state.eee_guild, members=True, roles=False, channels=False)
+    await update_guild_cache()
+    await update_guild_cache(state.eee_guild, True, False, False)
     # check if bot has @bot role
     bot_mem = state.guild.get_my_member()
     if bot_mem.get_top_role().name != RoleName.BOT:
@@ -30,7 +30,7 @@ async def now(e: hikari.StartedEvent) -> None:
     # create invite link from welcome channel if not found
     if not state.info[InfoField.INVITE_LINK]:
         welcome = get_channel_by_name(ChannelName.WELCOME)
-        invite = await fetch_invite_link(e, welcome)
+        invite = await fetch_invite_link(welcome)
         update_info_key(InfoField.INVITE_LINK, str(invite))
     log = FormatText.bold(state.info[InfoField.INVITE_LINK])
     print(FormatText.status(f"Invite Link: {log}"))

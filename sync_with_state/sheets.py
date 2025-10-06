@@ -24,6 +24,7 @@ def update_routine() -> None:
     state.routine = get_sheet_data(
         state.info[InfoField.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Routine.TITLE
     )
+    state.routine.set_index(EnrolmentSprdsht.Routine.SECTION_COL, inplace=True)
     print(FormatText.success("Updated routine dataframe successfully."))
 
 
@@ -38,7 +39,7 @@ def update_student_list() -> None:
     state.students = state.students[state.students.index != ""]
     print(FormatText.success("Updated enrolled student list dataframe successfully."))
 
-    # TODO[new]: this parts need to change...
+    # TODO: this parts need to change...
     # # for tracking which student's mark is in which section's sheet
     # state.df_marks_sec_lookup = state.students[[EnrolmentSprdsht.Students.DISCORD_ID_COL]]
     # # add a new column to track which section contains that student's marks

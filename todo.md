@@ -5,6 +5,7 @@
 - check and keep updating state at the same time
 - add `state.enrolment`
 - check and load st sheet
+- must fix `marks_groups`, may not be json complient
 
 # Replace names at the very end
 - ~~Change all `FileName`s to `FilePath` variables~~
@@ -20,6 +21,7 @@
 - Change `CELL_TO_FIELD_DICT` to `KEYS_AT_CELLS`
 - Change `update_routine/student_list` in `sync/sheets` to `fetch_routine/student_list`
 - Change `get_generic_error_response_while_verifying` to `get_generic_verification_error_response`
+- ~~Change `CLASS_TYPE_FACULTY_COL` to `FACULTY_COL`~~
 
 # Long time change
 - Change `ClassType` to `StrEnum`. But `ALL` poses an issue.

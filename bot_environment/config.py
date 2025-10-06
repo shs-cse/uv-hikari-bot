@@ -22,6 +22,15 @@ class ClassType:
     if __debug__:
         ALL = [THEORY, LAB]
 
+    def from_lab_suffix(lab_section: str) -> str:
+        match lab_section:
+            case "A":
+                return ClassType.LAB_A
+            case "B":
+                return ClassType.LAB_B
+            case _:
+                return ClassType.LAB
+
 
 class InfoField:
     COURSE_CODE = "course_code"
@@ -65,7 +74,7 @@ class FilePath:
 
 class TemplateLink:
     GUILD = "https://discord.new/pQ2GPFUGSjTB"
-    ENROLMENT_SHEET = "1m8Ule-fekFIz-3T4frEm6Q6p9AEOIFeMIg_OWr1ILlk"
+    ENROLMENT_SHEET = "1kKEFmMUYA0yelRp4V70unu2VB6hBXrezSynNJAmQK48"
     MARKS_SHEET = "1KdZeFEalvWJtOxvCzUcqqVw_L3IBlsQjys97fKC3n-c"
 
 
@@ -77,7 +86,7 @@ class RegexPattern:
     COURSE_NAME = r"(?!<).+"
     SEMESTER = r"(Fall|Spring|Summer)'[0-9]{2}"
     # student details
-    STUDENT_ID = r"([0-9]{8}|[0-9]{10})"
+    STUDENT_ID = r"^([0-9]{8}|[0-9]{10})$"
     STUDENT_NICKNAME = r"\[[0-9]{8,10}\].+"
     # faculty details
     FACULTY_NICKNAME = r"^\[([A-Z0-9]{3,5})\].+"
@@ -130,6 +139,11 @@ class RoleName:
         }
 
 
+class DisplayName:
+    STUDENT = "[{}] {}"
+    STUDENT_TUTOR = "[ST-{}] {}"
+
+
 class EnrolmentSprdsht:
     TITLE = "{course_code} {semester} Enrolment Manager"
 
@@ -161,10 +175,14 @@ class EnrolmentSprdsht:
     class Routine:
         TITLE = "Routine"
         SECTION_COL = "Section"
-        CLASS_TYPE_FACULTY_COL = {
-            ClassType.THEORY: "Theory Teacher",
-            ClassType.LAB: "Lab Teacher",
+        FACULTY_COL = {
+            ClassType.THEORY: "Theory Faculty",
+            ClassType.LAB: "Lab Faculty",
         }
+        THEORY_SECTION_COL = "Theory Section"
+        ST_INITIAL_COL = "Student Tutor Initial"
+        ST_ID_COL = "Student Tutor Id"
+        ST_NAME_COL = "Student Tutor Name"
 
     class ST:
         RANGE = "A1"
