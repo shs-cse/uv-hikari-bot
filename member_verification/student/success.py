@@ -50,11 +50,11 @@ async def verify_student(student: hikari.Member, student_id: int) -> Response:
     await assign_student_section_roles(student, theory_sec, class_type)
 
     # print information about the change
-    msg = f"Student Verification: {student.mention} was verified"
-    msg += f" with id {student_id} and roles for section {theory_sec}"
+    log = f"Student Verification: {student.mention} was verified"
+    log += f" with id {student_id} and roles for section {theory_sec}"
     student_roles = await student.fetch_roles()
-    msg += ": " + ", ".join("@" + role.name for role in student_roles)
-    print(FormatText.success(msg))
+    log += ": " + ", ".join("@" + role.name for role in student_roles)
+    print(FormatText.success(log))
     comment = f"### You have been successfully verified as {student_name}"
     comment += f" (ID: {student_id}) from section {theory_sec}."
     comment += " If this is not you, you may leave the server and try again."
