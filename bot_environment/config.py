@@ -97,6 +97,7 @@ class RegexPattern:
     FACULTY_NICKNAME = r"^\[([A-Z0-9]{3,5})\].+"
     # google drive file/folder id
     GOOGLE_DRIVE_LINK_ID = r"(?<=/)[\w_-]{15,}|^[\w_-]{15,}"
+    ST_SHEET_ID = r"^$|"+GOOGLE_DRIVE_LINK_ID
     # discord id
     DISCORD_ID = r"[0-9]{17,19}"
     DISCORD_BOT_TOKEN = r"^.{25,}$"  # discord keeps changing this...

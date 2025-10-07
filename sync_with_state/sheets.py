@@ -38,9 +38,12 @@ def update_student_list() -> None:
         numerize=False,
         empty_value=None,
     )
+    for col, dtype in EnrolmentSprdsht.Students.DF_DTYPE.items():
+        if dtype is int: # to avoid df.astype raising errors with None
+            state.students[col] = state.students[col].fillna(0)
     state.students = state.students.astype(EnrolmentSprdsht.Students.DF_DTYPE)
     state.students = state.students.set_index(EnrolmentSprdsht.Students.STUDENT_ID_COL)
-    state.students = state.students[~state.students.index.isnull()]
+    state.students = state.students[state.students.index>0]
     print(FormatText.success("Updated enrolled student list dataframe successfully."))
 
     # TODO: this parts need to change...

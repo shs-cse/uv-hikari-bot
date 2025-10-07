@@ -26,7 +26,8 @@ def check_routine_sheet() -> None:
     get_spreadsheet(state.info[InfoField.ROUTINE_SHEET_ID])
     
 def check_student_tutor_sheet() -> None:
-    get_spreadsheet(state.info[InfoField.ST_SHEET_ID])
+    if state.info[InfoField.ST_SHEET_ID]:
+        get_spreadsheet(state.info[InfoField.ST_SHEET_ID])
 
 def check_enrolment_sheet() -> None:
     # enrolment id may be empty

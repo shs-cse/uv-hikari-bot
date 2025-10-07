@@ -77,7 +77,7 @@ def check_regex_patterns() -> None:
         InfoField.COURSE_NAME: RegexPattern.COURSE_NAME,
         InfoField.SEMESTER: RegexPattern.SEMESTER,
         InfoField.ROUTINE_SHEET_ID: RegexPattern.GOOGLE_DRIVE_LINK_ID,
-        InfoField.ST_SHEET_ID: RegexPattern.GOOGLE_DRIVE_LINK_ID,
+        InfoField.ST_SHEET_ID: RegexPattern.ST_SHEET_ID,
         InfoField.MARKS_FOLDER_ID: RegexPattern.GOOGLE_DRIVE_LINK_ID,
         InfoField.GUILD_ID: RegexPattern.DISCORD_ID,
         InfoField.BOT_TOKEN: RegexPattern.DISCORD_BOT_TOKEN,
