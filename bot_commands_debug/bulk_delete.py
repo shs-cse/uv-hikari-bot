@@ -1,4 +1,4 @@
-import hikari, crescent, re
+import hikari, crescent
 from bot_environment import state
 from bot_environment.config import RolePermissions, ChannelName, ClassType
 from wrappers.utils import FormatText

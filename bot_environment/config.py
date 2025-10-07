@@ -110,9 +110,9 @@ class ChannelName:
     GENERAL_ANNOUNCEMENT = "📣general-announcements"
     if ClassType._IS_SUBCLASSED:
         SECTION_CATEGORY = {
-            ClassType.THEORY: "Section" + SpecialChars.WIDE_SPACE + "{:02d}" + SpecialChars.WIDE_SPACE + "Theory",
-            ClassType.LAB_A: "Section" + SpecialChars.WIDE_SPACE + "{:02d} A" + SpecialChars.WIDE_SPACE + "Lab",
-            ClassType.LAB_B: "Section" + SpecialChars.WIDE_SPACE + "{:02d} B" + SpecialChars.WIDE_SPACE + "Lab",
+            ClassType.THEORY: SpecialChars.WIDE_SPACE.join(("Section", "{:02d}", "Theory")),
+            ClassType.LAB_A: SpecialChars.WIDE_SPACE.join(("Section", "{:02d} A", "Lab")),
+            ClassType.LAB_B: SpecialChars.WIDE_SPACE.join(("Section", "{:02d} B", "Lab")),
         }
     else: # TODO: change below, currently set like this for old servers
         SECTION_CATEGORY = {
