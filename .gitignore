@@ -11,5 +11,5 @@ wheels/
 
 # Credentials and info backup (if any)
 *.json
-info_*
+info*.toml
 dev.py

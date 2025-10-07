@@ -29,9 +29,9 @@
     ```
 
 # Setup Droplet (New Semester)
-- Create folder (say `fall25`), enter it, `git clone` repo and skip updates for `info.toml`:
+- Create folder (say `fall_25`), enter it, `git clone` repo and skip updates for `info.toml`:
     ```sh
-    mkdir fall25 && cd $_ && git clone https://github.com/shs-cse/uv-hikari-bot.git . && git update-index --skip-worktree info.toml
+    mkdir fall_25 && cd $_ && git clone https://github.com/shs-cse/uv-hikari-bot.git . && git update-index --skip-worktree info.toml
     ```
 - If `credentials` in a different folder already exists (may be last semester), copy over to the new folder.
     ```sh
