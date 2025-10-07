@@ -8,18 +8,22 @@ class FacultyGuild:
 
 
 class SpecialChars:
-    ZERO_WIDTH_SPACE = "\u200b"
-    ONE_CHAR_WIDTH_SPACE = "\u3000"
+    WIDE_SPACE = "\u2001"
+    ELLIPSIS_CHAR = "\u2026"
+    # ZERO_WIDTH_SPACE = "\u200b"
+    # ONE_CHAR_WIDTH_SPACE = "\u3000"
+
 
 
 class ClassType:
+    _IS_SUBCLASSED = True
     THEORY = "theory"
     LAB = "lab"
     LAB_A = "lab_a"
     LAB_B = "lab_b"
-    ALL = [THEORY, LAB_A, LAB_B]
-    ...  # TODO: remove
-    if __debug__:
+    if _IS_SUBCLASSED:
+        ALL = [THEORY, LAB_A, LAB_B]
+    else:
         ALL = [THEORY, LAB]
 
     def from_lab_suffix(lab_section: str) -> str:
@@ -65,11 +69,12 @@ class FilePath:
     SHEETS_CREDENTIALS = Path("sheets.googleapis.com-python.json")
     INFO_TOML = Path("info.toml")
     VALID_TOML = Path("info_valid.toml")
-    COMMANDS_FOLDER = Path("bot_commands")
-    EVENTS_FOLDER = Path("bot_events")
-    BULK_DELETE = Path(f"{COMMANDS_FOLDER}.bulk_delete")
-    # DISCORD_WRAPPER = Path("wrappers.discord")
-    # DISCORD_SECTION_VALIDATION = Path("setup_validation.discord_sec")
+
+
+class PluginFileName:
+    COMMANDS_FOLDER = "bot_commands"
+    EVENTS_FOLDER = "bot_events"
+    DEBUG_COMMANDS_FOLDER = "bot_commands_debug"
 
 
 class TemplateLink:
@@ -103,13 +108,13 @@ class ChannelName:
     WELCOME = "👏🏻welcome✌🏻"
     ADMIN_HELP = "💁🏻admin-help"
     GENERAL_ANNOUNCEMENT = "📣general-announcements"
-    SECTION_CATEGORY = {
-        ClassType.THEORY: "Theory Section {:02d}",
-        ClassType.LAB_A: "Lab Section {:02d}A",
-        ClassType.LAB_B: "Lab Section {:02d}B",
-    }
-    ...  # TODO: remove
-    if __debug__:
+    if ClassType._IS_SUBCLASSED:
+        SECTION_CATEGORY = {
+            ClassType.THEORY: "Section" + SpecialChars.WIDE_SPACE + "{:02d}" + SpecialChars.WIDE_SPACE + "Theory",
+            ClassType.LAB_A: "Section" + SpecialChars.WIDE_SPACE + "{:02d} A" + SpecialChars.WIDE_SPACE + "Lab",
+            ClassType.LAB_B: "Section" + SpecialChars.WIDE_SPACE + "{:02d} B" + SpecialChars.WIDE_SPACE + "Lab",
+        }
+    else: # TODO: change below, currently set like this for old servers
         SECTION_CATEGORY = {
             ClassType.THEORY: "SECTION {:02d} THEORY",
             ClassType.LAB: "SECTION {:02d} LAB",
@@ -126,13 +131,13 @@ class RoleName:
     LAB_FACULTY = "lab-faculty"
     STUDENT_TUTOR = "student-tutor"
     STUDENT = "student"
-    SECTION = {
-        ClassType.THEORY: "sec-{:02d}",
-        ClassType.LAB_A: "sec-{:02d}A-lab",
-        ClassType.LAB_B: "sec-{:02d}B-lab",
-    }
-    ...  # TODO: remove
-    if __debug__:
+    if ClassType._IS_SUBCLASSED:
+        SECTION = {
+            ClassType.THEORY: "sec-{:02d}",
+            ClassType.LAB_A: "sec-{:02d}A-lab",
+            ClassType.LAB_B: "sec-{:02d}B-lab",
+        }
+    else:
         SECTION = {
             ClassType.THEORY: "sec-{:02d}",
             ClassType.LAB: "sec-{:02d}-lab",
@@ -142,6 +147,12 @@ class RoleName:
 class DisplayName:
     STUDENT = "[{}] {}"
     STUDENT_TUTOR = "[ST-{}] {}"
+    
+    def fmt(template:str, *args:tuple) -> str:
+        disp = template.format(*args)
+        if len(disp)<=32:
+            return disp
+        return disp[:31] + SpecialChars.ELLIPSIS_CHAR
 
 
 class EnrolmentSprdsht:
@@ -164,13 +175,22 @@ class EnrolmentSprdsht:
 
     class Students:
         TITLE = "Students"
-        SECTION_COL = "Theory Section"
-        LAB_SECTION_COL = "Lab Section"
         STUDENT_ID_COL = "Student Id"
         NAME_COL = "Name"
+        SECTION_COL = "Theory Section"
+        LAB_SECTION_COL = "Lab Section"
+        ADVISING_DISCORD_ID_COL = "Discord Id (Adv. Verified)"
         DISCORD_ID_COL = "Discord Id"
         MARKS_SEC_COL = "Marks Section"
-        ADVISING_DISCORD_ID_COL = "Discord Id (Adv. Verified)"
+        DF_DTYPE = {
+            STUDENT_ID_COL: int,
+            NAME_COL: str,
+            SECTION_COL: int,
+            LAB_SECTION_COL: str,
+            ADVISING_DISCORD_ID_COL: str,
+            DISCORD_ID_COL: str,
+            MARKS_SEC_COL: int
+        }
 
     class Routine:
         TITLE = "Routine"
@@ -184,9 +204,9 @@ class EnrolmentSprdsht:
         ST_ID_COL = "Student Tutor Id"
         ST_NAME_COL = "Student Tutor Name"
 
-    class ST:
+    class Connect:
+        TITLE = "Connect"
         RANGE = "A1"
-        ...  # TODO: incomplete
 
     class Discord:
         TITLE = "Discord"

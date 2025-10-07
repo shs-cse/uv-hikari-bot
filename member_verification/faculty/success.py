@@ -47,7 +47,7 @@ async def assign_faculty_section_roles(faculty: hikari.Member, initial: str) -> 
         print(FormatText.status(f"Assigning Role: @{new_role.name}"))
         await faculty.add_role(new_role)
     # discord response
-    all_roles_mentioned = reversed(sorted(roles_to_assign, key=lambda r: r.position))
+    all_roles_mentioned = sorted(roles_to_assign, key=lambda r: r.position, reverse=True)
     all_roles_mentioned = ", ".join(role.mention for role in all_roles_mentioned)
     return Response(
         comment="You have been assigned the following roles.",

@@ -1,4 +1,6 @@
 # Setup Local PC (First Time)
+- Install GitBash if on windows
+- ssh stuff
 
 
 

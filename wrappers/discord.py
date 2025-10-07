@@ -31,7 +31,6 @@ def get_sec_role_name(section: int, class_type: ClassType) -> str:
 def get_sec_role(section: int, class_type: ClassType) -> hikari.Role:
     name = get_sec_role_name(section, class_type)
     role = get_role_by_name(name)
-    ...  # TODO: sec template
     if section == 0 and not role:
         log = FormatText.bold("@" + name)
         log = FormatText.error(f"Template role {log} was not found.")
@@ -43,10 +42,9 @@ def get_sec_category_name(section: int, class_type: ClassType) -> str:
     return ChannelName.SECTION_CATEGORY[class_type].format(section)
 
 
-def get_sec_category(section: int, class_type: ClassType) -> hikari.GuildCategory:
+def get_sec_category(section: int, class_type: ClassType) -> hikari.GuildCategory | None:
     name = get_sec_category_name(section, class_type)
     category = get_channel_by_name(name)
-    ...  # TODO: sec template and check catergory dtype
     if section == 0 and not category:
         log = FormatText.bold("#" + name)
         log = FormatText.error(f"Template category {log} was not found.")

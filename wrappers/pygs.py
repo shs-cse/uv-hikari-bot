@@ -84,7 +84,7 @@ def get_sheet_data(
     spreadsheet_obj_or_id: Spreadsheet | str, 
     worksheet_title: str,
     **kwargs: dict
-) -> pd.DataFrame | bool:
+) -> pd.DataFrame:
     worksheet = get_sheet_by_name(spreadsheet_obj_or_id, worksheet_title)
     return worksheet.get_as_df(**kwargs)
 

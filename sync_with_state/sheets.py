@@ -11,11 +11,11 @@ def pull_from_enrolment() -> None:
     print(FormatText.success("Pulled data from enrolment sheet successfully."))
 
 
-# def push_to_enrolment() -> None:
-#     print(FormatText.wait("Pushing data to enrolment sheet..."))
-#     push_marks_section_to_enrolment()
-#     push_discord_data_to_enrolment()
-#     print(FormatText.success("Pushed data to enrolment sheet successfully."))
+def push_to_enrolment() -> None:
+    print(FormatText.wait("Pushing data to enrolment sheet..."))
+    push_marks_section_to_enrolment()
+    push_discord_data_to_enrolment()
+    print(FormatText.success("Pushed data to enrolment sheet successfully."))
 
 
 # fetch routine data from enrolment sheet
@@ -33,10 +33,14 @@ def update_student_list() -> None:
     # fetch student list from
     print(FormatText.wait("Updating enrolled student list dataframe..."))
     state.students = get_sheet_data(
-        state.info[InfoField.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Students.TITLE, empty_value=None
+        state.info[InfoField.ENROLMENT_SHEET_ID],
+        EnrolmentSprdsht.Students.TITLE,
+        numerize=False,
+        empty_value=None,
     )
+    state.students = state.students.astype(EnrolmentSprdsht.Students.DF_DTYPE)
     state.students = state.students.set_index(EnrolmentSprdsht.Students.STUDENT_ID_COL)
-    state.students = state.students[state.students.index != ""]
+    state.students = state.students[~state.students.index.isnull()]
     print(FormatText.success("Updated enrolled student list dataframe successfully."))
 
     # TODO: this parts need to change...
@@ -66,7 +70,7 @@ def push_marks_section_to_enrolment() -> None:
     marks_sec_start_cell = students_sheet.cell((2, marks_sec_col_num)).label
     update_sheet_values({marks_sec_start_cell: list_of_marks_sec}, students_sheet)
     print(FormatText.status("Updated marks section in enrolment sheet."))
-    
+
 
 def push_discord_data_to_enrolment() -> None:
     print(FormatText.status("Updating discord data in enrolment sheet..."))

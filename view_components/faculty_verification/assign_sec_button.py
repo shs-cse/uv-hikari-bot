@@ -1,4 +1,4 @@
-import hikari.emojis
+# import hikari.emojis
 import hikari, miru
 from sync_with_state.sheets import update_routine
 from member_verification.response import get_generic_error_response_while_verifying
@@ -14,7 +14,7 @@ class AssignSectionsButtonView(miru.View):
         super().__init__(timeout=None)
 
     @miru.button(
-        label="Assign Me Sections (again...)",
+        label="Update My Assigned Sections",
         emoji="🧑‍🏫",
         custom_id="faculty_assign_sections_button",
         style=hikari.ButtonStyle.SUCCESS,
