@@ -39,8 +39,8 @@ class InfoKey:
     COURSE_CODE = "course_code"
     COURSE_NAME = "course_title"
     SEMESTER = "semester"
-    LAST_SECTION = "last_section"
-    MISSING_SECTIONS = "missing_sections"
+    LAST_SECTION = "last_theory_section"
+    MISSING_SECTIONS = "missing_theory_sections"
     # tokens and ids
     MARKS_FOLDER_ID = "enrolment_and_marks_folder_id"
     ROUTINE_SHEET_ID = "routine_sheet_id"

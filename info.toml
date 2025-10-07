@@ -2,13 +2,13 @@
 course_code = ""
 course_title = ""
 semester = ""
-last_section = 0
-missing_sections = []
+last_theory_section = 0
+missing_theory_sections = [] # list of integers
 
 # Google Drive and Sheets ID
 enrolment_and_marks_folder_id = ""
 routine_sheet_id = ""
-student_tutor_sheet_id = ""
+student_tutor_sheet_id = "" # empty string == not available yet.
 
 # Discord IDs
 discord_server_id = ""
