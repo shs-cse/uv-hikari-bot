@@ -1,7 +1,7 @@
 import hikari, crescent, miru
 import hikari.errors
 from bot_environment import state
-from bot_environment.config import InfoField, FilePath, PluginFileName
+from bot_environment.config import InfoKey, FilePath, PluginFileName
 import warnings
 from setup_validation.toml_inputs import check_and_load_info
 from wrappers.utils import FormatText
@@ -17,11 +17,11 @@ def main() -> None:
     check_and_load_info()
     # hikari + crescent -> create bot and client
     bot = hikari.GatewayBot(
-        state.info[InfoField.BOT_TOKEN],
+        state.info[InfoKey.BOT_TOKEN],
         intents=hikari.Intents.ALL,
         logs="INFO" if __debug__ else "WARNING",
     )
-    this_guild_id = int(state.info[InfoField.GUILD_ID])
+    this_guild_id = int(state.info[InfoKey.GUILD_ID])
     client = crescent.Client(bot, default_guild=this_guild_id)
     client.plugins.load_folder(PluginFileName.EVENTS_FOLDER)
     client.plugins.load_folder(PluginFileName.COMMANDS_FOLDER)
@@ -42,7 +42,7 @@ def main() -> None:
     except hikari.errors.UnauthorizedError as autherror:
         log = FormatText.error(
             "Bot authorization failed. Please check "
-            + f"{FilePath.INFO_TOML} > '{InfoField.BOT_TOKEN}'"
+            + f"{FilePath.INFO_TOML} > '{InfoKey.BOT_TOKEN}'"
         )
         raise Exception(log) from autherror
 

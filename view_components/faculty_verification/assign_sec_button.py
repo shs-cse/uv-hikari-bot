@@ -1,7 +1,7 @@
 # import hikari.emojis
 import hikari, miru
 from sync_with_state.sheets import update_routine
-from member_verification.response import get_generic_error_response_while_verifying
+from member_verification.response import get_generic_verification_error_response
 from member_verification.faculty.check import try_faculty_verification
 from wrappers.utils import FormatText
 
@@ -30,7 +30,7 @@ class AssignSectionsButtonView(miru.View):
             update_routine()
             response = await try_faculty_verification(ctx.member)
         except Exception as error:
-            response = get_generic_error_response_while_verifying(error, try_faculty_verification)
+            response = get_generic_verification_error_response(error, try_faculty_verification)
             log = "Faculty Verification: raised an error while trying to assgin sections to"
             log += f" {ctx.member.display_name} {ctx.member.mention}."
             print(FormatText.error(log))

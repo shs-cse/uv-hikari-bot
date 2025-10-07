@@ -1,6 +1,6 @@
 import hikari, crescent
 from bot_environment import state
-from bot_environment.config import InfoField, RolePermissions
+from bot_environment.config import InfoKey, RolePermissions
 from wrappers.utils import update_info_key
 from setup_validation.marks import check_marks_groups_and_sheets
 
@@ -17,10 +17,10 @@ bot_admin_marks_group = crescent.Group(
 @crescent.command(name="enable")
 async def marks_enable(ctx: crescent.Context) -> None:
     await ctx.defer(ephemeral=True)
-    if state.info[InfoField.MARKS_ENABLED]:
+    if state.info[InfoKey.MARKS_ENABLED]:
         log = "Marks feature is already enabled."
     else:
-        update_info_key(InfoField.MARKS_ENABLED, True)
+        update_info_key(InfoKey.MARKS_ENABLED, True)
         check_marks_groups_and_sheets()
         log = "Marks feature has been enabled."
         log += " All previously published marks has to be republished by faculties."
@@ -33,10 +33,10 @@ async def marks_enable(ctx: crescent.Context) -> None:
 @crescent.command(name="disable")
 async def marks_disable(ctx: crescent.Context) -> None:
     await ctx.defer(ephemeral=True)
-    if not state.info[InfoField.MARKS_ENABLED]:
+    if not state.info[InfoKey.MARKS_ENABLED]:
         log = "Marks feature is already disabled."
     else:
-        update_info_key(InfoField.MARKS_ENABLED, False)
+        update_info_key(InfoKey.MARKS_ENABLED, False)
         ...  # TODO: delete variables to save memory
         log = "Marks feature has been disabled."
     await ctx.respond(log)

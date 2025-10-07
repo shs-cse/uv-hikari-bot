@@ -14,7 +14,6 @@ class SpecialChars:
     # ONE_CHAR_WIDTH_SPACE = "\u3000"
 
 
-
 class ClassType:
     _IS_SUBCLASSED = True
     THEORY = "theory"
@@ -36,11 +35,11 @@ class ClassType:
                 return ClassType.LAB
 
 
-class InfoField:
+class InfoKey:
     COURSE_CODE = "course_code"
     COURSE_NAME = "course_title"
     SEMESTER = "semester"
-    NUM_SECTIONS = "last_section"
+    LAST_SECTION = "last_section"
     MISSING_SECTIONS = "missing_sections"
     # tokens and ids
     MARKS_FOLDER_ID = "enrolment_and_marks_folder_id"
@@ -97,7 +96,7 @@ class RegexPattern:
     FACULTY_NICKNAME = r"^\[([A-Z0-9]{3,5})\].+"
     # google drive file/folder id
     GOOGLE_DRIVE_LINK_ID = r"(?<=/)[\w_-]{15,}|^[\w_-]{15,}"
-    ST_SHEET_ID = r"^$|"+GOOGLE_DRIVE_LINK_ID
+    ST_SHEET_ID = r"^$|" + GOOGLE_DRIVE_LINK_ID
     # discord id
     DISCORD_ID = r"[0-9]{17,19}"
     DISCORD_BOT_TOKEN = r"^.{25,}$"  # discord keeps changing this...
@@ -115,7 +114,7 @@ class ChannelName:
             ClassType.LAB_A: SpecialChars.WIDE_SPACE.join(("Section", "{:02d} A", "Lab")),
             ClassType.LAB_B: SpecialChars.WIDE_SPACE.join(("Section", "{:02d} B", "Lab")),
         }
-    else: # TODO: change below, currently set like this for old servers
+    else:  # TODO: change below, currently set like this for old servers
         SECTION_CATEGORY = {
             ClassType.THEORY: "SECTION {:02d} THEORY",
             ClassType.LAB: "SECTION {:02d} LAB",
@@ -148,10 +147,10 @@ class RoleName:
 class DisplayName:
     STUDENT = "[{}] {}"
     STUDENT_TUTOR = "[ST-{}] {}"
-    
-    def fmt(template:str, *args:tuple) -> str:
+
+    def fmt(template: str, *args: tuple) -> str:
         disp = template.format(*args)
-        if len(disp)<=32:
+        if len(disp) <= 32:
             return disp
         return disp[:31] + SpecialChars.ELLIPSIS_CHAR
 
@@ -161,17 +160,17 @@ class EnrolmentSprdsht:
 
     class Meta:
         TITLE = "Meta"
-        FIELDS_TO_CELLS_DICT = {  # write data to cell
-            "B1": InfoField.SEMESTER,
-            "B2": InfoField.COURSE_CODE,
-            "B3": InfoField.COURSE_NAME,
-            "B4": InfoField.NUM_SECTIONS,
-            "B5": InfoField.MISSING_SECTIONS,
-            "B7": InfoField.ROUTINE_SHEET_ID,
-            "B11": InfoField.ST_SHEET_ID,
+        KEYS_AT_CELLS_DICT = {  # write data to cell
+            "B1": InfoKey.SEMESTER,
+            "B2": InfoKey.COURSE_CODE,
+            "B3": InfoKey.COURSE_NAME,
+            "B4": InfoKey.LAST_SECTION,
+            "B5": InfoKey.MISSING_SECTIONS,
+            "B7": InfoKey.ROUTINE_SHEET_ID,
+            "B11": InfoKey.ST_SHEET_ID,
         }
-        FIELDS_FROM_CELLS_DICT = {  # read data from cell
-            InfoField.MARKS_GROUPS: "B14"  # fmt:skip
+        KEYS_FROM_CELLS_DICT = {  # read data from cell
+            InfoKey.MARKS_GROUPS: "B14"  # fmt:skip
         }
 
     class Students:
@@ -190,7 +189,7 @@ class EnrolmentSprdsht:
             LAB_SECTION_COL: str,
             ADVISING_DISCORD_ID_COL: str,
             DISCORD_ID_COL: str,
-            MARKS_SEC_COL: int
+            MARKS_SEC_COL: int,
         }
 
     class Routine:
@@ -219,7 +218,7 @@ class MarksSprdsht:
 
     class Meta:
         TITLE = "Meta"
-        CELL_TO_FIELD_DICT = {"K2": InfoField.ENROLMENT_SHEET_ID}
+        KEYS_AT_CELLS_DICT = {"K2": InfoKey.ENROLMENT_SHEET_ID}
 
     class SecXX:
         TITLE = "Sec {:02d}"

@@ -1,53 +1,53 @@
 import json
 from bot_environment import state
-from bot_environment.config import InfoField, EnrolmentSprdsht, MarksSprdsht, TemplateLink
+from bot_environment.config import InfoKey, EnrolmentSprdsht, MarksSprdsht, TemplateLink
 from sync_with_state.sheets import update_student_list, push_marks_section_to_enrolment
 from wrappers.utils import FormatText, update_info_key
 from wrappers.pygs import Spreadsheet, Worksheet, WorksheetNotFound
 from wrappers.pygs import get_spreadsheet, copy_spreadsheet, get_sheet_by_name
-from wrappers.pygs import update_cells_from_fields
+from wrappers.pygs import update_cells_from_keys
 from wrappers.pygs import share_with_faculty_as_editor
 
 
 # check if marks_enabled has boolean values or not
 def check_marks_enabled() -> None:
-    if not isinstance(state.info[InfoField.MARKS_ENABLED], bool):
+    if not isinstance(state.info[InfoKey.MARKS_ENABLED], bool):
         log = "Marks enabled must be a boolean value"
         raise TypeError(FormatText.error(log))
     # validated marks enabled
-    log = "enabled" if state.info[InfoField.MARKS_ENABLED] else "disabled"
+    log = "enabled" if state.info[InfoKey.MARKS_ENABLED] else "disabled"
     print(FormatText.success(f"Marks spreadsheets are {log} for all sections."))
 
 
 def check_marks_groups_and_sheets() -> None:
-    if not state.info[InfoField.MARKS_ENABLED]:
+    if not state.info[InfoKey.MARKS_ENABLED]:
         print(FormatText.status("Marks feature is disabled."))
         return
     # fetch marks groups from enrolment and check spreadsheets
-    check_marks_groups(state.info[InfoField.ENROLMENT_SHEET_ID])
-    for email, marks_group in state.info[InfoField.MARKS_GROUPS].items():
+    check_marks_groups(state.info[InfoKey.ENROLMENT_SHEET_ID])
+    for email, marks_group in state.info[InfoKey.MARKS_GROUPS].items():
         for section in marks_group:
             check_marks_sheet(section, email, marks_group)
 
 
 def check_marks_groups(enrolment_sheet: Spreadsheet) -> None:
-    print(FormatText.wait(f'Fetching "{InfoField.MARKS_GROUPS}" from spreadsheet...'))
+    print(FormatText.wait(f'Fetching "{InfoKey.MARKS_GROUPS}" from spreadsheet...'))
     meta_wrksht = get_sheet_by_name(enrolment_sheet, EnrolmentSprdsht.Meta.TITLE)
-    marks_groups_cell = EnrolmentSprdsht.Meta.FIELDS_FROM_CELLS_DICT[InfoField.MARKS_GROUPS]
+    marks_groups_cell = EnrolmentSprdsht.Meta.KEYS_FROM_CELLS_DICT[InfoKey.MARKS_GROUPS]
     marks_groups_str: str = meta_wrksht.get_value(marks_groups_cell)
     marks_groups: dict[str, list[int]] = json.loads(marks_groups_str)
-    print(FormatText.status(f'"{InfoField.MARKS_GROUPS}": {FormatText.bold(marks_groups)}'))
+    print(FormatText.status(f'"{InfoKey.MARKS_GROUPS}": {FormatText.bold(marks_groups)}'))
     # check if all sections in marks groups
     if set(state.available_secs) != {sec for group in marks_groups.values() for sec in group}:
         log = "Marks groups contain sections that does not exist in"
         log += f" {meta_wrksht.url}&range={marks_groups_cell}"
         raise ValueError(FormatText.error(log))
     # update info toml
-    update_info_key(InfoField.MARKS_GROUPS, marks_groups)
+    update_info_key(InfoKey.MARKS_GROUPS, marks_groups)
 
 
 def check_marks_sheet(sec: int, email: str, group: list[int]) -> Worksheet:
-    marks_ids = state.info[InfoField.MARKS_SHEET_IDS].copy()  # TODO: why copy?
+    marks_ids = state.info[InfoKey.MARKS_SHEET_IDS].copy()  # TODO: why copy?
     # fetch or create spreadsheet
     if marks_ids.get(str(sec), ""):  # key may not exist or value may be ""
         spreadsheet = get_spreadsheet(marks_ids[str(sec)])
@@ -56,7 +56,7 @@ def check_marks_sheet(sec: int, email: str, group: list[int]) -> Worksheet:
     else:  # first group member has spreadsheet
         spreadsheet = get_spreadsheet(marks_ids[str(group[0])])
     marks_ids[str(sec)] = spreadsheet.id
-    update_info_key(InfoField.MARKS_SHEET_IDS, marks_ids)
+    update_info_key(InfoKey.MARKS_SHEET_IDS, marks_ids)
     log = f'Section {sec:02d} > Marks spreadsheet: "{spreadsheet.title}"'
     print(FormatText.success(log))
     return get_or_create_marks_worksheet(spreadsheet, sec)
@@ -68,15 +68,15 @@ def create_marks_spreadsheet(sec: int, group: list[int], email: str) -> Spreadsh
     spreadsheet = copy_spreadsheet(
         TemplateLink.MARKS_SHEET,
         MarksSprdsht.TITLE.format(
-            course_code=state.info[InfoField.COURSE_CODE],
+            course_code=state.info[InfoKey.COURSE_CODE],
             sections=",".join(f"{s:02d}" for s in group),
-            semester=state.info[InfoField.SEMESTER],
+            semester=state.info[InfoKey.SEMESTER],
         ),
-        state.info[InfoField.MARKS_FOLDER_ID],
+        state.info[InfoKey.MARKS_FOLDER_ID],
     )
     share_with_faculty_as_editor(spreadsheet, email)
-    update_cells_from_fields(
-        spreadsheet, {MarksSprdsht.Meta.TITLE: MarksSprdsht.Meta.CELL_TO_FIELD_DICT}
+    update_cells_from_keys(
+        spreadsheet, {MarksSprdsht.Meta.TITLE: MarksSprdsht.Meta.KEYS_AT_CELLS_DICT}
     )
     return spreadsheet
 
@@ -119,20 +119,20 @@ def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> 
     sec_sheet.set_dataframe(
         sec_students[[EnrolmentSprdsht.Students.NAME_COL]], start=start_cell, copy_index=True
     )
-    
-    
+
+
 def load_marks_sections() -> None:
-    if not state.info[InfoField.MARKS_ENABLED]:
+    if not state.info[InfoKey.MARKS_ENABLED]:
         return
     # refresh all marks section column entry
     state.students[EnrolmentSprdsht.Students.MARKS_SEC_COL] = 0
     for sec in state.available_secs:
         load_marks_section(sec)
-    
-    
+
+
 def load_marks_section(marks_sec: int) -> None:
-    for email, group in state.info['marks_groups'].items(): 
-        if marks_sec in group: 
+    for email, group in state.info["marks_groups"].items():
+        if marks_sec in group:
             break
     sec_sheet = check_marks_sheet(marks_sec, email, group)
     # update both in state.students and enrolment

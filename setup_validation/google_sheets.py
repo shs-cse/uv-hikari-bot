@@ -1,9 +1,9 @@
 from bot_environment import state
-from bot_environment.config import FilePath, InfoField, EnrolmentSprdsht, TemplateLink
+from bot_environment.config import FilePath, InfoKey, EnrolmentSprdsht, TemplateLink
 from wrappers import pygs
 from wrappers.utils import FormatText, update_info_key
 from wrappers.pygs import get_google_client, get_spreadsheet, copy_spreadsheet
-from wrappers.pygs import update_cells_from_fields, allow_access, share_with_anyone
+from wrappers.pygs import update_cells_from_keys, allow_access, share_with_anyone
 
 
 def check_google_credentials() -> None:
@@ -23,15 +23,17 @@ def check_google_credentials() -> None:
 
 
 def check_routine_sheet() -> None:
-    get_spreadsheet(state.info[InfoField.ROUTINE_SHEET_ID])
-    
+    get_spreadsheet(state.info[InfoKey.ROUTINE_SHEET_ID])
+
+
 def check_student_tutor_sheet() -> None:
-    if state.info[InfoField.ST_SHEET_ID]:
-        get_spreadsheet(state.info[InfoField.ST_SHEET_ID])
+    if state.info[InfoKey.ST_SHEET_ID]:
+        get_spreadsheet(state.info[InfoKey.ST_SHEET_ID])
+
 
 def check_enrolment_sheet() -> None:
     # enrolment id may be empty
-    if enrolment_id := state.info[InfoField.ENROLMENT_SHEET_ID]:
+    if enrolment_id := state.info[InfoKey.ENROLMENT_SHEET_ID]:
         enrolment_sheet = get_spreadsheet(enrolment_id)
     else:
         # enrolment id not found -> create a new sheet
@@ -39,21 +41,21 @@ def check_enrolment_sheet() -> None:
         log += " Creating a new spreadsheet..."
         print(FormatText.warning(log))
         spreadsheet_title = EnrolmentSprdsht.TITLE.format(
-            course_code = state.info[InfoField.COURSE_CODE],
-            semester = state.info[InfoField.SEMESTER],
+            course_code=state.info[InfoKey.COURSE_CODE],
+            semester=state.info[InfoKey.SEMESTER],
         )
         enrolment_sheet = copy_spreadsheet(
             template_id=TemplateLink.ENROLMENT_SHEET,
             title=spreadsheet_title,
-            folder_id=state.info[InfoField.MARKS_FOLDER_ID],
+            folder_id=state.info[InfoKey.MARKS_FOLDER_ID],
         )
     # finally update info file
-    update_info_key(InfoField.ENROLMENT_SHEET_ID, enrolment_sheet.id)
+    update_info_key(InfoKey.ENROLMENT_SHEET_ID, enrolment_sheet.id)
     # update routines and stuff (for both new and old enrolment sheet)
-    update_cells_from_fields(
+    update_cells_from_keys(
         enrolment_sheet,
-        {EnrolmentSprdsht.Meta.TITLE: EnrolmentSprdsht.Meta.FIELDS_TO_CELLS_DICT},
+        {EnrolmentSprdsht.Meta.TITLE: EnrolmentSprdsht.Meta.KEYS_AT_CELLS_DICT},
     )
-    allow_access(enrolment_sheet.id, state.info[InfoField.ROUTINE_SHEET_ID])
-    allow_access(enrolment_sheet.id, state.info[InfoField.ST_SHEET_ID])
+    allow_access(enrolment_sheet.id, state.info[InfoKey.ROUTINE_SHEET_ID])
+    allow_access(enrolment_sheet.id, state.info[InfoKey.ST_SHEET_ID])
     share_with_anyone(enrolment_sheet)  # also gives it some time to fetch marks groups

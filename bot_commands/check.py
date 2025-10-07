@@ -2,7 +2,7 @@ import hikari, crescent
 from bot_environment import state
 from bot_environment.config import RolePermissions, RoleName, DisplayName
 from sync_with_state.sheets import update_routine, update_student_list
-from member_verification.response import get_generic_error_response_while_verifying
+from member_verification.response import get_generic_verification_error_response
 from member_verification.faculty.check import try_faculty_verification
 from member_verification.student.check import try_student_verification
 from member_verification.check import try_member_auto_verification
@@ -27,7 +27,7 @@ class CheckFacultySections:
         try:
             response = await try_faculty_verification(self.faculty)
         except Exception as error:
-            response = get_generic_error_response_while_verifying(error, try_faculty_verification)
+            response = get_generic_verification_error_response(error, try_faculty_verification)
             log = "Faculty Verification: raised an error while trying to assgin sections to"
             log += f" {self.faculty.display_name} {self.faculty.mention}."
             print(FormatText.error(log))
@@ -62,7 +62,7 @@ async def student_id_autocomplete_callback(
     suggestions = state.students.index.astype(str).str.startswith(option.value)
     suggestions = state.students.index[suggestions][:25]
     choices = []
-    for student_id, name in state.students.loc[suggestions, 'Name'].items():
+    for student_id, name in state.students.loc[suggestions, "Name"].items():
         name = DisplayName.STUDENT.format(student_id, name)
         choices.append((name, student_id))
     return choices
@@ -76,8 +76,10 @@ class VerifyMemberWithStudentId:
         hikari.User, description="Server member you want to verify."
     )
     student_id = crescent.option(
-        int, name="student-id", description="Verify member with this student id.",
-        autocomplete=student_id_autocomplete_callback
+        int,
+        name="student-id",
+        description="Verify member with this student id.",
+        autocomplete=student_id_autocomplete_callback,
     )  # TODO: autocomplete
 
     async def callback(self, ctx: crescent.Context) -> None:
@@ -85,7 +87,7 @@ class VerifyMemberWithStudentId:
         try:
             response = await try_student_verification(self.member, str(self.student_id))
         except Exception as error:
-            response = get_generic_error_response_while_verifying(error, try_student_verification)
+            response = get_generic_verification_error_response(error, try_student_verification)
             log = "Student Verification: raised an error while trying to verify"
             log += f" {self.member.mention} {self.member.display_name} for with {self.student_id}."
             print(FormatText.error(log))
@@ -106,9 +108,7 @@ class VerifyMemberWithAdvisingServer:
         try:
             response = await try_member_auto_verification(self.member)
         except Exception as error:
-            response = get_generic_error_response_while_verifying(
-                error, try_member_auto_verification
-            )
+            response = get_generic_verification_error_response(error, try_member_auto_verification)
             log = "Member Verification: raised an error while trying to verify member on join:"
             log += f" {self.member.mention} {self.member.display_name}."
             print(FormatText.error(log))

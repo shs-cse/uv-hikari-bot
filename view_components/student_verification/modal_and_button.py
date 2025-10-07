@@ -2,7 +2,7 @@ import hikari.emojis
 import hikari, miru
 from bot_environment import state
 from bot_environment.config import ChannelName
-from member_verification.response import get_generic_error_response_while_verifying
+from member_verification.response import get_generic_verification_error_response
 from member_verification.student.check import try_student_verification
 from wrappers.discord import get_channel_by_name
 from wrappers.utils import FormatText
@@ -65,7 +65,7 @@ class StudentIdModalView(miru.Modal):
                 reinput_text=self.retyped_id.value,
             )
         except Exception as error:
-            response = get_generic_error_response_while_verifying(error, try_student_verification)
+            response = get_generic_verification_error_response(error, try_student_verification)
             log = "Student Verification: raised an error while trying to submit a modal for"
             log += f" {self.student_id.value}/{self.retyped_id.value}."
             print(FormatText.error(log))

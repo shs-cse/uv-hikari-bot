@@ -3,7 +3,7 @@ import pandas as pd
 from pygsheets import Spreadsheet, Worksheet
 from pygsheets.client import Client
 from pygsheets.exceptions import SpreadsheetNotFound, WorksheetNotFound
-from pygsheets.exceptions import * # noqa:F403
+from pygsheets.exceptions import *  # noqa:F403
 from bot_environment import state
 from bot_environment.config import FilePath, RegexPattern
 from wrappers.utils import FormatText
@@ -61,10 +61,7 @@ def get_spreadsheet(spreadsheet_id: str) -> Spreadsheet:
 
 
 # get a specific worksheet (tab) by name from a spreadsheet
-def get_sheet_by_name(
-    spreadsheet_obj_or_id: Spreadsheet | str, 
-    worksheet_name: str 
-) -> Worksheet:
+def get_sheet_by_name(spreadsheet_obj_or_id: Spreadsheet | str, worksheet_name: str) -> Worksheet:
     if isinstance(spreadsheet_obj_or_id, Spreadsheet):
         spreadsheet = spreadsheet_obj_or_id
     else:
@@ -81,9 +78,7 @@ def get_sheet_by_name(
 
 # get complete sheet data as pandas dataframe
 def get_sheet_data(
-    spreadsheet_obj_or_id: Spreadsheet | str, 
-    worksheet_title: str,
-    **kwargs: dict
+    spreadsheet_obj_or_id: Spreadsheet | str, worksheet_title: str, **kwargs: dict
 ) -> pd.DataFrame:
     worksheet = get_sheet_by_name(spreadsheet_obj_or_id, worksheet_title)
     return worksheet.get_as_df(**kwargs)
@@ -96,10 +91,7 @@ def share_with_anyone(spreadsheet: Spreadsheet) -> None:
     spreadsheet.share("", role="reader", type="anyone")
 
 
-def share_with_faculty_as_editor(
-    spreadsheet: Spreadsheet,
-    faculty_email: str
-) -> None:
+def share_with_faculty_as_editor(spreadsheet: Spreadsheet, faculty_email: str) -> None:
     print(FormatText.wait(f"Sharing spreadsheet with {FormatText.bold(faculty_email)}..."))
     print(FormatText.status(f"Url: {FormatText.bold(spreadsheet.url)}"))
     if re.search(RegexPattern.EMAIL_ADDRESS, faculty_email):
@@ -130,7 +122,6 @@ def copy_spreadsheet(template_id: str, title: str, folder_id: str) -> Spreadshee
     return spreadsheet
 
 
-
 # update cell values from dictionary in a sheet
 def update_sheet_values(
     cell_value_dict: dict,
@@ -159,21 +150,18 @@ def update_sheet_values(
 
 
 # directly update cells, no need to check
-def update_cells_from_fields(
-    spreadsheet: Spreadsheet, 
-    sheet_cell_fields_dict: dict
-) -> None:
-    for sheet_name, cell_field_dict in sheet_cell_fields_dict.items():
+def update_cells_from_keys(spreadsheet: Spreadsheet, sheet_cell_keys_dict: dict[str, dict]) -> None:
+    for sheet_name, cell_info_key_dict in sheet_cell_keys_dict.items():
         worksheet = spreadsheet.worksheet_by_title(sheet_name)
-        # map info field to their actual values for updating sheets
+        # map info key to their actual values for updating sheets
         cell_value_dict = {}
-        for cell, field in cell_field_dict.items():
-            value = state.info[field]
+        for cell, info_key in cell_info_key_dict.items():
+            value = state.info[info_key]
             if isinstance(value, list):
                 value = ",".join(str(item) for item in value)
             cell_value_dict[cell] = value
         update_sheet_values(cell_value_dict, worksheet)
-        
+
 
 # allow access stuff via url api call
 def allow_access(dest_spreadsheet_id: str, src_spreadsheet_id: str) -> None:

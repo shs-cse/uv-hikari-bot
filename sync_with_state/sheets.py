@@ -1,5 +1,5 @@
 from bot_environment import state
-from bot_environment.config import InfoField, EnrolmentSprdsht
+from bot_environment.config import InfoKey, EnrolmentSprdsht
 from wrappers.pygs import get_sheet_by_name, get_sheet_data, update_sheet_values
 from wrappers.utils import FormatText
 
@@ -22,7 +22,7 @@ def push_to_enrolment() -> None:
 def update_routine() -> None:
     print(FormatText.wait("Updating routine dataframe..."))
     state.routine = get_sheet_data(
-        state.info[InfoField.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Routine.TITLE
+        state.info[InfoKey.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Routine.TITLE
     )
     state.routine.set_index(EnrolmentSprdsht.Routine.SECTION_COL, inplace=True)
     print(FormatText.success("Updated routine dataframe successfully."))
@@ -33,17 +33,17 @@ def update_student_list() -> None:
     # fetch student list from
     print(FormatText.wait("Updating enrolled student list dataframe..."))
     state.students = get_sheet_data(
-        state.info[InfoField.ENROLMENT_SHEET_ID],
+        state.info[InfoKey.ENROLMENT_SHEET_ID],
         EnrolmentSprdsht.Students.TITLE,
         numerize=False,
         empty_value=None,
     )
     for col, dtype in EnrolmentSprdsht.Students.DF_DTYPE.items():
-        if dtype is int: # to avoid df.astype raising errors with None
+        if dtype is int:  # to avoid df.astype raising errors with None
             state.students[col] = state.students[col].fillna(0)
     state.students = state.students.astype(EnrolmentSprdsht.Students.DF_DTYPE)
     state.students = state.students.set_index(EnrolmentSprdsht.Students.STUDENT_ID_COL)
-    state.students = state.students[state.students.index>0]
+    state.students = state.students[state.students.index > 0]
     print(FormatText.success("Updated enrolled student list dataframe successfully."))
 
     # TODO: this parts need to change...
@@ -65,7 +65,7 @@ def push_marks_section_to_enrolment() -> None:
     list_of_marks_sec = state.students[[EnrolmentSprdsht.Students.MARKS_SEC_COL]]
     list_of_marks_sec = list_of_marks_sec.fillna(0).to_numpy(int).tolist()
     students_sheet = get_sheet_by_name(
-        state.info[InfoField.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Students.TITLE
+        state.info[InfoKey.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Students.TITLE
     )
     ...  # TODO: make sure student list matches
     students_sheet_headers: list = students_sheet.get_row(1)
@@ -79,7 +79,7 @@ def push_discord_data_to_enrolment() -> None:
     print(FormatText.status("Updating discord data in enrolment sheet..."))
     # clear old discord data
     discord_sheet = get_sheet_by_name(
-        state.info[InfoField.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Discord.TITLE
+        state.info[InfoKey.ENROLMENT_SHEET_ID], EnrolmentSprdsht.Discord.TITLE
     )
     discord_sheet.clear(EnrolmentSprdsht.Discord.RANGE)
     # extract member roles (just for visuals, not really mandatory anymore)
