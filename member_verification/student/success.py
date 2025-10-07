@@ -43,7 +43,7 @@ async def assign_student_section_roles(
 async def verify_student(student: hikari.Member, student_id: int) -> Response:
     student_name = state.students.loc[student_id, EnrolmentSprdsht.Students.NAME_COL]
     student_name = student_name.title()
-    theory_sec = int(state.students.loc[student_id, EnrolmentSprdsht.Students.SECTION_COL])
+    theory_sec = int(state.students.loc[student_id, EnrolmentSprdsht.Students.THEORY_SECTION_COL])
     lab_sec = state.students.loc[student_id, EnrolmentSprdsht.Students.LAB_SECTION_COL]
     class_type = ClassType.from_lab_suffix(lab_sec)
 

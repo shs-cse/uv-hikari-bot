@@ -177,7 +177,7 @@ class EnrolmentSprdsht:
         TITLE = "Students"
         STUDENT_ID_COL = "Student Id"
         NAME_COL = "Name"
-        SECTION_COL = "Theory Section"
+        THEORY_SECTION_COL = "Theory Section"
         LAB_SECTION_COL = "Lab Section"
         ADVISING_DISCORD_ID_COL = "Discord Id (Adv. Verified)"
         DISCORD_ID_COL = "Discord Id"
@@ -185,7 +185,7 @@ class EnrolmentSprdsht:
         DF_DTYPE = {
             STUDENT_ID_COL: int,
             NAME_COL: str,
-            SECTION_COL: int,
+            THEORY_SECTION_COL: int,
             LAB_SECTION_COL: str,
             ADVISING_DISCORD_ID_COL: str,
             DISCORD_ID_COL: str,

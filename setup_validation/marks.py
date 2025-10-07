@@ -114,7 +114,7 @@ def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> 
         return
     # filter students in section and populate marks sheet
     print(FormatText.status(f"Populating marks sheet for section {sec:02d} with student list..."))
-    is_student_in_sec = state.students[EnrolmentSprdsht.Students.SECTION_COL] == sec
+    is_student_in_sec = state.students[EnrolmentSprdsht.Students.THEORY_SECTION_COL] == sec
     sec_students = state.students[is_student_in_sec]
     sec_sheet.set_dataframe(
         sec_students[[EnrolmentSprdsht.Students.NAME_COL]], start=start_cell, copy_index=True
