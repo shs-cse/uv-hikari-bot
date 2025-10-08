@@ -97,7 +97,7 @@ class VerifyMemberWithStudentId:
 # same as user command for auto verification
 @plugin.include
 @verify_member_sub_group.child
-@crescent.command(name="with-advising-server")
+@crescent.command(name="try-automatic")
 class VerifyMemberWithAdvisingServer:
     member: hikari.Member = crescent.option(
         hikari.User, description="Server member you want to verify."

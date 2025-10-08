@@ -200,6 +200,7 @@ class EnrolmentSprdsht:
             ClassType.LAB: "Lab Faculty",
         }
         THEORY_SECTION_COL = "Theory Section"
+        LAB_SECTION_COL = "Lab Section"
         ST_INITIAL_COL = "Student Tutor Initial"
         ST_ID_COL = "Student Tutor Id"
         ST_NAME_COL = "Student Tutor Name"

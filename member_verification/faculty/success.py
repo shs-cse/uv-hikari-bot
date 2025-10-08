@@ -6,43 +6,36 @@ from bot_environment.config import ClassType, EnrolmentSprdsht
 from member_verification.response import Response
 
 
-def extract_section_and_class_type(load: str, is_theory: bool) -> tuple:
-    lab_type = ClassType.from_lab_suffix(load[-1])
-    if lab_type != ClassType.LAB:
-        load = load[:-1]
-    theory_sec = int(load)
-    class_type = ClassType.THEORY if is_theory else lab_type
-    # match load[-1]:
-    #     case "A":
-    #         theory_sec = int(load[:-1])
-    #         class_type = ClassType.THEORY if is_theory else ClassType.LAB_A
-    #     case "B":
-    #         theory_sec = int(load[:-1])
-    #         class_type = ClassType.THEORY if is_theory else ClassType.LAB_B
-    #     case _:
-    #         theory_sec = int(load)
-    #         class_type = ClassType.THEORY if is_theory else ClassType.LAB
-    return theory_sec, class_type
-
-
 # assign theory/lab roles and section roles to faculty
 async def assign_faculty_section_roles(faculty: hikari.Member, initial: str) -> Response:
     # remove all old roles
     for old_role in faculty.get_roles():
         if 0 < old_role.position <= state.faculty_role.position:
             await faculty.remove_role(old_role)
-    # add new roles
+    # gather all relevant roles
     roles_to_assign = {state.faculty_role}
     for faculty_load_type, faculty_col in EnrolmentSprdsht.Routine.FACULTY_COL.items():
-        faculty_list = state.routine[faculty_col]
-        is_faculty_load = faculty_list.str.contains(initial)
-        faculty_load = state.routine.index[is_faculty_load].tolist()
-        for load in faculty_load:
+        # find all loads
+        faculty_list = state.routine[faculty_col].astype(str) + ","
+        is_faculty_load = faculty_list.str.contains(initial + ",")
+        faculty_loads = state.routine.loc[
+            is_faculty_load,
+            [
+                EnrolmentSprdsht.Routine.THEORY_SECTION_COL,
+                EnrolmentSprdsht.Routine.LAB_SECTION_COL,
+            ],
+        ]
+        # faculty subrole
+        if any(is_faculty_load):
             roles_to_assign.add(state.faculty_sub_roles[faculty_load_type])
-            theory_sec, class_type = extract_section_and_class_type(
-                str(load), faculty_load_type == ClassType.THEORY
-            )
+        # section roles
+        for _, theory_sec, lab_sec_suffix in faculty_loads.itertuples():
+            if faculty_load_type == ClassType.THEORY:
+                class_type = ClassType.THEORY
+            else:
+                class_type = ClassType.from_lab_suffix(lab_sec_suffix)
             roles_to_assign.add(state.sec_roles[theory_sec][class_type])
+    # assign all roles
     for new_role in roles_to_assign:
         print(FormatText.status(f"Assigning Role: @{new_role.name}"))
         await faculty.add_role(new_role)
