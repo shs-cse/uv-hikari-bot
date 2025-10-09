@@ -66,8 +66,8 @@ def fetch_marks(student_id: int, assessment: str, sec: int = 0) -> pd.DataFrame 
 
 
 def get_marks_out_of(earned_marks: int | str, total_marks: int | str, dummy_url: str) -> str:
-    if isinstance(total_marks, int):
-        if not earned_marks:
+    if str(total_marks).isdecimal():
+        if earned_marks == "":
             earned_marks = SpecialChars.NOT_ATTENDED_CHAR
         text = f"[**{earned_marks}**]({dummy_url})"
         text += f"{SpecialChars.WIDE_SPACE}*out of*{SpecialChars.WIDE_SPACE}"
@@ -86,7 +86,8 @@ def display_marks(
     assessment = marks_df.columns[0]
     total_marks = marks_df.loc[MarksDf.Student.TOTAL_MARKS].loc[assessment]
     earned_marks = marks_df.loc[MarksDf.Student.EARNED_MARKS].loc[assessment]
-    embed.description = f"## {assessment}\n## {SpecialChars.ZERO_WIDTH}{SpecialChars.WIDE_SPACE}"
+    title = assessment.split(SpecialChars.PARENT_CHILD_CHAR)[-1]
+    embed.description = f"## {title}\n## {SpecialChars.ZERO_WIDTH}{SpecialChars.WIDE_SPACE}"
     embed.description += get_marks_out_of(earned_marks, total_marks, dummy_url)
     # children marks
     for col in marks_df.columns[1:]:
@@ -99,6 +100,10 @@ def display_marks(
         value = f"{SpecialChars.ZERO_WIDTH}{2 * SpecialChars.WIDE_SPACE}{value}"
         embed.add_field(name, value)
     # add footer (optional)
+    import urllib.parse
+    dummy_url = f"https://dummy.url/{urllib.parse.quote(assessment)}"
+    # embed.set_author(name=SpecialChars.ZERO_WIDTH, url=dummy_url)
+    embed.url = dummy_url
     embed.set_footer(
         text=f"{student_id}{SpecialChars.WIDE_SPACE}{student_name}", icon=hikari.UnicodeEmoji("#️⃣")
     )
