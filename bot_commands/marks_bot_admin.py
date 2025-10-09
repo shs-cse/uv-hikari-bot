@@ -1,20 +1,23 @@
 import hikari, crescent
 from bot_environment import state
-from bot_environment.config import InfoKey, RolePermissions
+from bot_environment.config import InfoKey, RolePermissions, PluginPathName
 from wrappers.utils import update_info_key
 from setup_validation.marks import check_marks_groups_and_sheets
 
 plugin = crescent.Plugin[hikari.GatewayBot, None]()
 
-bot_admin_marks_group = crescent.Group(
-    "marks", default_member_permissions=RolePermissions.BOT_ADMIN
+bot_admin_enable_group = crescent.Group(
+    "enable", default_member_permissions=RolePermissions.BOT_ADMIN
+)
+bot_admin_disable_group = crescent.Group(
+    "disable", default_member_permissions=RolePermissions.BOT_ADMIN
 )
 
 
 # @admin enable marks -> check and be ready to load marks.
 @plugin.include
-@bot_admin_marks_group.child
-@crescent.command(name="enable")
+@bot_admin_enable_group.child
+@crescent.command(name="marks-features")
 async def marks_enable(ctx: crescent.Context) -> None:
     await ctx.defer(ephemeral=True)
     if state.info[InfoKey.MARKS_ENABLED]:
@@ -22,6 +25,8 @@ async def marks_enable(ctx: crescent.Context) -> None:
     else:
         update_info_key(InfoKey.MARKS_ENABLED, True)
         check_marks_groups_and_sheets()
+        ...  # TODO: load marks sections
+        ...  # TODO: load actual marks data
         log = "Marks feature has been enabled."
         log += " All previously published marks has to be republished by faculties."
     await ctx.respond(log)
@@ -29,8 +34,8 @@ async def marks_enable(ctx: crescent.Context) -> None:
 
 # @admin disable marks -> turn off all button, clear variables to save memory.
 @plugin.include
-@bot_admin_marks_group.child
-@crescent.command(name="disable")
+@bot_admin_disable_group.child
+@crescent.command(name="marks-features")
 async def marks_disable(ctx: crescent.Context) -> None:
     await ctx.defer(ephemeral=True)
     if not state.info[InfoKey.MARKS_ENABLED]:
@@ -38,5 +43,7 @@ async def marks_disable(ctx: crescent.Context) -> None:
     else:
         update_info_key(InfoKey.MARKS_ENABLED, False)
         ...  # TODO: delete variables to save memory
+        ...  # TODO: unload faculty marks commands
+        plugin.client.plugins.unload(PluginPathName.MARKS_FACULTY)
         log = "Marks feature has been disabled."
     await ctx.respond(log)

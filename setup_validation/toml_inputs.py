@@ -50,6 +50,7 @@ def check_and_load_info() -> None:
     load_sections()
     pull_from_enrolment()
     load_marks_sections()
+    ... # TODO: actually load marks
     push_marks_section_to_enrolment()
 
 

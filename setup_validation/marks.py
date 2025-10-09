@@ -103,8 +103,8 @@ def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> 
         log += " (at least no student in local data `state.students`)"
         print(FormatText.status(log))
         return
-    start_cell = (MarksSprdsht.SecXX.ACTUAL_ROW_DATA_START, MarksSprdsht.SecXX.COL_FOR_STUDENT_IDS)
-    end_cell = (sec_sheet.rows, MarksSprdsht.SecXX.COL_FOR_STUDENT_IDS)
+    start_cell = MarksSprdsht.SecXX.MARKS_DATA_START_CELL
+    end_cell = (sec_sheet.rows, MarksSprdsht.SecXX.COL_NUM_STUDENT_IDS)
     student_ids = sec_sheet.get_as_df(start=start_cell, end=end_cell)
     # populate with student ids only if marks sheet is empty
     if not student_ids.empty:
@@ -117,7 +117,9 @@ def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> 
     is_student_in_sec = state.students[EnrolmentSprdsht.Students.THEORY_SECTION_COL] == sec
     sec_students = state.students[is_student_in_sec]
     sec_sheet.set_dataframe(
-        sec_students[[EnrolmentSprdsht.Students.NAME_COL]], start=start_cell, copy_index=True
+        sec_students[[EnrolmentSprdsht.Students.NAME_COL, EnrolmentSprdsht.Students.GSUITE_COL]],
+        start=start_cell,
+        copy_index=True,
     )
 
 
@@ -138,8 +140,8 @@ def load_marks_section(marks_sec: int) -> None:
     # update both in state.students and enrolment
     if state.students.empty:
         return
-    start_cell = (MarksSprdsht.SecXX.ACTUAL_ROW_DATA_START, MarksSprdsht.SecXX.COL_FOR_STUDENT_IDS)
-    end_cell = (sec_sheet.rows, MarksSprdsht.SecXX.COL_FOR_STUDENT_IDS)
+    start_cell = MarksSprdsht.SecXX.MARKS_DATA_START_CELL
+    end_cell = (sec_sheet.rows, MarksSprdsht.SecXX.COL_NUM_STUDENT_IDS)
     student_ids = sec_sheet.get_as_df(start=start_cell, end=end_cell)
     if student_ids.empty:
         return

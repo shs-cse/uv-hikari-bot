@@ -1,7 +1,7 @@
 import hikari, crescent, miru
 import hikari.errors
 from bot_environment import state
-from bot_environment.config import InfoKey, FilePath, PluginFileName
+from bot_environment.config import InfoKey, FilePath, PluginPathName
 import warnings
 from setup_validation.toml_inputs import check_and_load_info
 from wrappers.utils import FormatText
@@ -23,10 +23,10 @@ def main() -> None:
     )
     this_guild_id = int(state.info[InfoKey.GUILD_ID])
     client = crescent.Client(bot, default_guild=this_guild_id)
-    client.plugins.load_folder(PluginFileName.EVENTS_FOLDER)
-    client.plugins.load_folder(PluginFileName.COMMANDS_FOLDER)
+    client.plugins.load_folder(PluginPathName.EVENTS_FOLDER)
+    client.plugins.load_folder(PluginPathName.COMMANDS_FOLDER)
     if __debug__:
-        client.plugins.load_folder(PluginFileName.DEBUG_COMMANDS_FOLDER)
+        client.plugins.load_folder(PluginPathName.DEBUG_COMMANDS_FOLDER)
     # initialize miru for managing buttons and forms
     state.miru_client = miru.Client(bot)
     # run the bot

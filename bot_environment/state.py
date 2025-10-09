@@ -18,9 +18,9 @@ guild: hikari.Guild | None = None
 eee_guild: hikari.Guild | None = None
 
 # role related objects
-sec_roles : dict[int, dict[ClassType, hikari.Role]] = {}
+sec_roles: dict[int, dict[ClassType, hikari.Role]] = {}
 # e.g. sec_roles = {1: {'theory': @sec-01, 'lab_a': @sec-01A-lab,  'lab_b': @sec-01B-lab, }, ...}
-all_sec_roles : set = {}
+all_sec_roles: set = {}
 # e.g. all_sec_roles = {@sec-01, @sec-01A-lab, @sec-01B-lab, ...}
 faculty_role: hikari.Role | None = None
 faculty_sub_roles: dict[ClassType, hikari.Role] = {}
@@ -31,3 +31,6 @@ student_role: hikari.Role | None = None
 
 # discord sec channels
 sec_template: dict[ClassType, DiscordClassTypeTemplate] = {}
+
+# marks stuff
+published_marks: dict[int, pd.DataFrame] = {}

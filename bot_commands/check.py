@@ -80,7 +80,7 @@ class VerifyMemberWithStudentId:
         name="student-id",
         description="Verify member with this student id.",
         autocomplete=student_id_autocomplete_callback,
-    )  # TODO: autocomplete
+    )
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.defer(True)

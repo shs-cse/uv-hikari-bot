@@ -11,8 +11,8 @@ from wrappers.utils import FormatText
 class VerificationButtonView(miru.View):
     def __init__(self) -> None:
         admin_help_channel = get_channel_by_name(ChannelName.ADMIN_HELP)
-        self.post_content = "## Please click to *verify* yourself!!\n"
-        self.post_content += "Otherwise you **won't** be able to see much of the server,"
+        self.post_content = "## Please enter your student id!!\n"
+        self.post_content += "Otherwise you **will not** be able to see the whole server,"
         self.post_content += " including your own *section announcements* and *study-materials*."
         self.post_content += "\n\nIf you are facing trouble,"
         self.post_content += f" please contact {state.admin_role.mention}s"
@@ -20,7 +20,7 @@ class VerificationButtonView(miru.View):
         super().__init__(timeout=None)
 
     @miru.button(
-        label="Verify Me",
+        label="Enter Student ID",
         emoji="🙋",
         custom_id="student_verification_button",
         style=hikari.ButtonStyle.SUCCESS,

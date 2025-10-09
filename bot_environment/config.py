@@ -10,7 +10,11 @@ class FacultyGuild:
 class SpecialChars:
     WIDE_SPACE = "\u2001"
     ELLIPSIS_CHAR = "\u2026"
-    # ZERO_WIDTH_SPACE = "\u200b"
+    CONT_HYPHEN_CHAR = "\u2500"
+    ZERO_WIDTH = "\u200b"
+    # sheet relate stuff
+    PARENT_CHILD_CHAR = "\u21ac"
+    NOT_ATTENDED_CHAR = "\u2013"
     # ONE_CHAR_WIDTH_SPACE = "\u3000"
 
 
@@ -70,10 +74,11 @@ class FilePath:
     VALID_TOML = Path("info_valid.toml")
 
 
-class PluginFileName:
+class PluginPathName:
     COMMANDS_FOLDER = "bot_commands"
     EVENTS_FOLDER = "bot_events"
     DEBUG_COMMANDS_FOLDER = "bot_commands_debug"
+    MARKS_FACULTY = f"{COMMANDS_FOLDER}.marks_faculty"
 
 
 class TemplateLink:
@@ -94,6 +99,8 @@ class RegexPattern:
     STUDENT_NICKNAME = r"\[[0-9]{8,10}\].+"
     # faculty details
     FACULTY_NICKNAME = r"^\[([A-Z0-9]{3,5})\].+"
+    # extract student id or faculty/st initial
+    MEMBER_INITIAL = r"^\[(.+)\]"
     # google drive file/folder id
     GOOGLE_DRIVE_LINK_ID = r"(?<=/)[\w_-]{15,}|^[\w_-]{15,}"
     ST_SHEET_ID = r"^$|" + GOOGLE_DRIVE_LINK_ID
@@ -177,6 +184,7 @@ class EnrolmentSprdsht:
         TITLE = "Students"
         STUDENT_ID_COL = "Student Id"
         NAME_COL = "Name"
+        GSUITE_COL = "Gsuite"
         THEORY_SECTION_COL = "Theory Section"
         LAB_SECTION_COL = "Lab Section"
         ADVISING_DISCORD_ID_COL = "Discord Id (Adv. Verified)"
@@ -223,13 +231,30 @@ class MarksSprdsht:
 
     class SecXX:
         TITLE = "Sec {:02d}"
-        COL_FOR_STUDENT_IDS = 2
-        ROW_FOR_HEADER = 3
-        HEADER_START = (ROW_FOR_HEADER, COL_FOR_STUDENT_IDS)
-        # TODO: rename
-        ACTUAL_ROW_DATA_START = 100
-        # TODO: remove -(1+ROW_FOR_HEADER)
-        ROW_FOR_PUBLISH_STATUS = 24 - (1 + ROW_FOR_HEADER)
-        ROW_FOR_THIS_COL = 14 - (1 + ROW_FOR_HEADER)
-        ROW_FOR_ALL_CHILDREN = 17 - (1 + ROW_FOR_HEADER)
-        ROW_DATA_START = 100 - (1 + ROW_FOR_HEADER)
+        STUDENT_ID_COL = "Student Id"
+        # sheet row/col number
+        COL_NUM_STUDENT_IDS = 2
+        ROW_NUM_HEADER = 3
+        ROW_NUM_IS_UNIQUE = 8
+        ROW_NUM_PARENT_COL = 9
+        ROW_NUM_THIS_COL = 14
+        ROW_NUM_PUBLISH_STATUS = 24
+        ROW_NUM_DATA_START = 100
+        # cell = (row, col)
+        HEADER_START_CELL = (ROW_NUM_HEADER, COL_NUM_STUDENT_IDS)
+        MARKS_DATA_START_CELL = (ROW_NUM_DATA_START, COL_NUM_STUDENT_IDS)
+
+
+class MarksDf:
+    OFFSET_ROW = 1 + MarksSprdsht.SecXX.ROW_NUM_HEADER
+    ROW_NUM_IS_UNIQUE = MarksSprdsht.SecXX.ROW_NUM_IS_UNIQUE - OFFSET_ROW
+    ROW_NUM_PARENT_COL = MarksSprdsht.SecXX.ROW_NUM_PARENT_COL - OFFSET_ROW
+    ROW_NUM_THIS_COL = MarksSprdsht.SecXX.ROW_NUM_THIS_COL - OFFSET_ROW
+    ROW_NUM_PUBLISH_STATUS = MarksSprdsht.SecXX.ROW_NUM_PUBLISH_STATUS - OFFSET_ROW
+    
+    class Student:
+        EARNED_MARKS = "Earned Marks"
+        EARNED_BONUS = "Earned Bonus"
+        TOTAL_MARKS = "Total Marks"
+        TOTAL_BONUS = "Total Bonus"
+        INDEX = [TOTAL_BONUS, TOTAL_MARKS, EARNED_BONUS, EARNED_MARKS]
