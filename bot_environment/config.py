@@ -12,9 +12,11 @@ class SpecialChars:
     ELLIPSIS_CHAR = "\u2026"
     CONT_HYPHEN_CHAR = "\u2500"
     ZERO_WIDTH = "\u200b"
-    # sheet relate stuff
+    # sheet related stuff
     PARENT_CHILD_CHAR = "\u21ac"
     NOT_ATTENDED_CHAR = "\u2013"
+    # marks button id stuff
+    MARKS_BUTTON_ID_SEP = "/"
     # ONE_CHAR_WIDTH_SPACE = "\u3000"
 
 
@@ -58,6 +60,7 @@ class InfoKey:
     MARKS_ENABLED = "marks_enabled"
     MARKS_GROUPS = "marks_groups"
     MARKS_SHEET_IDS = "marks_sheet_ids"
+    MARKS_BUTTONS = "marks_buttons"
 
 
 class RolePermissions:
@@ -77,7 +80,7 @@ class FilePath:
 class PluginPathName:
     COMMANDS_FOLDER = "bot_commands"
     EVENTS_FOLDER = "bot_events"
-    DEBUG_COMMANDS_FOLDER = "bot_commands_debug"
+    DEBUG_COMMANDS_FOLDER = "bot_debug_commands"
     MARKS_FACULTY = f"{COMMANDS_FOLDER}.marks_faculty"
 
 
@@ -238,6 +241,7 @@ class MarksSprdsht:
         ROW_NUM_IS_UNIQUE = 8
         ROW_NUM_PARENT_COL = 9
         ROW_NUM_THIS_COL = 14
+        ROW_NUM_NUMERIC_CHILDREN_COL = 15
         ROW_NUM_PUBLISH_STATUS = 24
         ROW_NUM_DATA_START = 100
         # cell = (row, col)
@@ -250,11 +254,13 @@ class MarksDf:
     ROW_NUM_IS_UNIQUE = MarksSprdsht.SecXX.ROW_NUM_IS_UNIQUE - OFFSET_ROW
     ROW_NUM_PARENT_COL = MarksSprdsht.SecXX.ROW_NUM_PARENT_COL - OFFSET_ROW
     ROW_NUM_THIS_COL = MarksSprdsht.SecXX.ROW_NUM_THIS_COL - OFFSET_ROW
+    ROW_NUM_NUMERIC_CHILDREN_COL = MarksSprdsht.SecXX.ROW_NUM_NUMERIC_CHILDREN_COL - OFFSET_ROW
     ROW_NUM_PUBLISH_STATUS = MarksSprdsht.SecXX.ROW_NUM_PUBLISH_STATUS - OFFSET_ROW
-    
-    class Student:
+
+    class Single:
         EARNED_MARKS = "Earned Marks"
         EARNED_BONUS = "Earned Bonus"
         TOTAL_MARKS = "Total Marks"
         TOTAL_BONUS = "Total Bonus"
-        INDEX = [TOTAL_BONUS, TOTAL_MARKS, EARNED_BONUS, EARNED_MARKS]
+        CHILDREN = "Children"
+        INDEX = [CHILDREN, TOTAL_BONUS, EARNED_BONUS, TOTAL_MARKS, EARNED_MARKS]

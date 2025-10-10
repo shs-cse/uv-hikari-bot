@@ -4,14 +4,16 @@
 - ~~Section `0` as discord template instead of `1`~~
 - ~~`str(sec)` may cause issue `f"{sec:02d}"`~~
 - ~~check and keep updating state at the same time~~
-- add `state.enrolment`
 - ~~check and load st sheet~~
 - ~~must fix `marks_groups`, may not be json complient~~
 - ~~do something about `LAB_A/B` vs `LAB`. may be new toml key?~~
     - ~~current solution is debug dependent... `uv->LAB` & `uvo->LAB_A/B`~~
+- add `state.enrolment`
 - instead of `load_marks_section`, do `load_marks`
     - use `update_marks` in the process?
     - define `update_marks_section`
+- git add `[marks_buttons]` in `info.toml`
+- ~~autocomplete fix~~
 
 # Replace names at the very end
 - ~~Change all `FileName`s to `FilePath` variables~~

@@ -47,7 +47,7 @@ def check_marks_groups(enrolment_sheet: Spreadsheet) -> None:
 
 
 def check_marks_sheet(sec: int, email: str, group: list[int]) -> Worksheet:
-    marks_ids = state.info[InfoKey.MARKS_SHEET_IDS].copy()  # TODO: why copy?
+    marks_ids = state.info[InfoKey.MARKS_SHEET_IDS].copy()  # to compare with original dict
     # fetch or create spreadsheet
     if marks_ids.get(str(sec), ""):  # key may not exist or value may be ""
         spreadsheet = get_spreadsheet(marks_ids[str(sec)])

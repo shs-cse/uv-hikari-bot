@@ -20,7 +20,6 @@ async def post_student_verification_button(ctx: crescent.Context) -> None:
     await ctx.defer()
     view = VerificationButtonView()
     await ctx.respond(view.post_content, components=view)
-    state.miru_client.start_view(view, bind_to=None)
 
 
 @plugin.include
@@ -30,7 +29,6 @@ async def post_faculty_section_assignment_button(ctx: crescent.Context) -> None:
     await ctx.defer()
     view = AssignSectionsButtonView()
     await ctx.respond(view.post_content, components=view)
-    state.miru_client.start_view(view, bind_to=None)
 
 
 @plugin.include

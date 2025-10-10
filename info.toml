@@ -26,3 +26,6 @@ marks_enabled = false
 
 [marks_sheet_ids]
 # 1 = "SHEET_ID" # no leading 0's before section
+
+[marks_buttons]
+# 1 = ["Grade", "Attendance"]

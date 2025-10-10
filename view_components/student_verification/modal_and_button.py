@@ -1,4 +1,3 @@
-import hikari.emojis
 import hikari, miru
 from bot_environment import state
 from bot_environment.config import ChannelName
@@ -11,17 +10,17 @@ from wrappers.utils import FormatText
 class VerificationButtonView(miru.View):
     def __init__(self) -> None:
         admin_help_channel = get_channel_by_name(ChannelName.ADMIN_HELP)
-        self.post_content = "## Please enter your student id!!\n"
-        self.post_content += "Otherwise you **will not** be able to see the whole server,"
+        self.post_content = "## Please Enter Your Student ID!!\n"
+        self.post_content += "Otherwise you **__will not__** be able to see the whole server,"
         self.post_content += " including your own *section announcements* and *study-materials*."
         self.post_content += "\n\nIf you are facing trouble,"
         self.post_content += f" please contact {state.admin_role.mention}s"
-        self.post_content += f" by posting on the {admin_help_channel.mention} channel."
+        self.post_content += f" by posting on the {admin_help_channel.mention} channel.\n"
         super().__init__(timeout=None)
 
     @miru.button(
         label="Enter Student ID",
-        emoji="🙋",
+        emoji="🪪",
         custom_id="student_verification_button",
         style=hikari.ButtonStyle.SUCCESS,
     )
@@ -50,7 +49,9 @@ class StudentIdModalView(miru.Modal):
 
     def __init__(self) -> None:
         super().__init__(
-            title="Student Verification Form", timeout=None, custom_id="student_verification_modal"
+            title="Student Identification Form",
+            timeout=None,
+            custom_id="student_verification_modal",
         )
 
     async def callback(self, ctx: miru.ModalContext) -> None:

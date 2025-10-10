@@ -2,7 +2,10 @@ import hikari, crescent, re
 from bot_environment import state
 from bot_environment.config import InfoKey, RolePermissions, ClassType
 from bot_environment.config import RegexPattern, EnrolmentSprdsht, SpecialChars
-from sync_with_state.marks import update_marks_data, fetch_marks, display_marks
+from sync_with_state.marks import update_marks_data
+from wrappers.utils import FormatText
+from view_components.marks.button_fetch import ShowMarksView
+from view_components.marks.embed_and_nav import create_marks_navigator
 
 
 plugin = crescent.Plugin[hikari.GatewayBot, None]()
@@ -41,7 +44,7 @@ class UpdateMarks:
     section = crescent.option(
         int,
         name="section",
-        description="Whose marks you wish to update. You must be one of the theory faculty of it.",
+        description="Section whose marks you wish to update. You must be its theory faculty.",
         autocomplete=faculty_marks_section_autocomplete_callback,
     )
 
@@ -62,21 +65,27 @@ def extract_student_id_and_marks_sec(student: hikari.Member) -> tuple[int, int]:
     return student_id, marks_sec
 
 
-async def marks_assessment_autocomplete_callback(
+def marks_assessment_choices(section: int, search_text: str) -> list[tuple[str, str]]:
+    col_list = [
+        (subbed, col)
+        for col in state.published_marks[section].columns
+        if search_text.lower()
+        in (subbed := col.replace(SpecialChars.PARENT_CHILD_CHAR, " > ")).lower()
+    ]
+    return col_list[:25]
+
+
+async def marks_assessment_by_student_autocomplete_callback(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> list[tuple[str, str]]:
     try:
-        member = state.guild.get_member(int(ctx.options["student"])) # FetchMarks class variable
+        member = state.guild.get_member(
+            int(ctx.options["student"])
+        )  # TODO: generalize this FetchMarks class variable
         if member.get_top_role() != state.student_role:
             return []
         _, marks_sec = extract_student_id_and_marks_sec(member)
-        col_list = [
-            (subbed, col)
-            for col in state.published_marks[marks_sec].columns
-            if option.value.lower()
-            in (subbed := col.replace(SpecialChars.PARENT_CHILD_CHAR, " > ")).lower()
-        ]
-        return col_list[:25]
+        return marks_assessment_choices(marks_sec, option.value)
     except Exception:
         return []
 
@@ -88,32 +97,81 @@ class FetchMarks:
     student: hikari.Member = crescent.option(
         hikari.User,
         name="student",
-        description="Whose marks you wish to fetch.",
+        description="Student whose marks you wish to fetch.",
     )
 
     assessment = crescent.option(
         str,
         name="assessment",
-        description="Choose which assessment's marks you wish to fetch",
-        autocomplete=marks_assessment_autocomplete_callback,
+        description="Choose which assessment's marks you wish to fetch.",
+        autocomplete=marks_assessment_by_student_autocomplete_callback,
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.defer(ephemeral=True)
-        if self.student.get_top_role() != state.student_role:
-            log = f"{self.student} is not a verified student. Can't fetch marks."
-            await ctx.respond(log, ephemeral=True)
-            return
-        student_id, marks_sec = extract_student_id_and_marks_sec(self.student)
-        marks_df = fetch_marks(student_id, self.assessment, marks_sec)
-        if marks_df is None:
-            log = "Marks was not found for:"
-            log += f" {marks_sec} > {student_id} > {self.assessment}."
-            await ctx.respond(log, ephemeral=True)
-            return
-        # actually display marks
-        response = f"{ctx.member.mention} Here is your marks details."
-        name = state.students[EnrolmentSprdsht.Students.NAME_COL].loc[student_id]
-        dummy_url = f"https://discord.com/channels/{ctx.guild.id}/{ctx.channel.id}"
-        embed = display_marks(student_id, name, marks_df, dummy_url)
-        await ctx.respond(content=response, embed=embed, ephemeral=True)
+        try:
+            navigator = create_marks_navigator(self.student, self.assessment)
+            bldr = await navigator.build_response_async(state.miru_client)
+            await ctx.edit(content=bldr.content, components=bldr.components, embeds=bldr.embeds)
+            state.miru_client.start_view(navigator)
+        except Exception as log:
+            print(FormatText.error(log))
+            await ctx.respond("Something went wrong, can't fetch marks.")
+            
+            
+
+
+async def marks_assessment_by_section_autocomplete_callback(
+    ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
+) -> list[tuple[str, str]]:
+    try:
+        section = int(ctx.options["section"])
+        if section not in state.available_secs:
+            return []
+        return marks_assessment_choices(section, option.value)
+    except Exception:
+        return []
+
+
+@plugin.include
+@faculty_marks_group.child
+@crescent.command(name="post", description="Post Button for showing marks.")
+class PostMarksButton:
+    section = crescent.option(
+        int,
+        name="section",
+        description="Section whose marks you wish students to see. You must be its theory faculty.",
+        autocomplete=faculty_marks_section_autocomplete_callback,
+    )
+
+    assessment = crescent.option(
+        str,
+        name="assessment",
+        description="Choose which assessment's marks you wish to show.",
+        autocomplete=marks_assessment_by_section_autocomplete_callback,
+    )
+
+    faculty_text = crescent.option(
+        str,
+        name="text",
+        description="Bot will auto add main text. But if you want to add more, input here.",
+        default="",
+    )
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        await ctx.defer(True)
+        sec_role = state.sec_roles[self.section][ClassType.THEORY]
+        if sec_role not in ctx.member.get_roles():
+            log = f"Can't post marks for section {self.section:02d}"
+            log += " beacuase you are not the theory faculty."
+        elif self.assessment not in state.published_marks[self.section].columns:
+            log = "Can't post marks for assessment because it is not published (locally)."
+            log += " Either the assessment was not published, or"
+            log += " marks was not updated afterwards."
+        else:
+            # add button
+            view = ShowMarksView(self.section, self.assessment, self.faculty_text)
+            await ctx.channel.send(content=view.post_content, components=view)
+            state.miru_client.start_view(view, bind_to=None)
+            log = "Marks button has been created."
+        await ctx.respond(log)

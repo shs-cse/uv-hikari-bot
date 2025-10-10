@@ -1,4 +1,3 @@
-import hikari
 import pandas as pd
 from bot_environment import state
 from bot_environment.config import InfoKey, MarksSprdsht, SpecialChars, EnrolmentSprdsht, MarksDf
@@ -54,57 +53,16 @@ def fetch_marks(student_id: int, assessment: str, sec: int = 0) -> pd.DataFrame 
         log += f" does not contain the assessment:\n\t{assessment}"
         print(FormatText.warning(log))
         return
+    # assessment and its children
     this_col_row = MarksDf.ROW_NUM_THIS_COL
     parent_col_row = MarksDf.ROW_NUM_PARENT_COL
     col_num = marks_df[assessment].iloc[this_col_row]
     cols = marks_df.iloc[parent_col_row] == col_num
     cols |= marks_df.iloc[this_col_row] == col_num
-    rows = [MarksSprdsht.SecXX.STUDENT_ID_COL, student_id]  # Total rows have index 'Student Id'
+    # total (bonus and actual), student marks (bonus and actual) and children
+    rows = marks_df.index.get_loc(MarksSprdsht.SecXX.STUDENT_ID_COL)  # total row's index
+    rows |= marks_df.index.get_loc(student_id)
+    rows[MarksDf.ROW_NUM_NUMERIC_CHILDREN_COL] = True
     marks_df = marks_df.loc[rows, cols]
-    marks_df.index = MarksDf.Student.INDEX
+    marks_df.index = MarksDf.Single.INDEX
     return marks_df
-
-
-def get_marks_out_of(earned_marks: int | str, total_marks: int | str, dummy_url: str) -> str:
-    if str(total_marks).isdecimal():
-        if earned_marks == "":
-            earned_marks = SpecialChars.NOT_ATTENDED_CHAR
-        text = f"[**{earned_marks}**]({dummy_url})"
-        text += f"{SpecialChars.WIDE_SPACE}*out of*{SpecialChars.WIDE_SPACE}"
-        text += f"{total_marks}"
-    else:  # likely text data, print as it is
-        text = f"{earned_marks} {total_marks}"
-    return text
-
-
-def display_marks(
-    student_id: int, student_name: str, marks_df: pd.DataFrame, dummy_url: str
-) -> hikari.Embed:
-    embed = hikari.Embed()
-    embed.color = 0xFF051A
-    # assessment marks
-    assessment = marks_df.columns[0]
-    total_marks = marks_df.loc[MarksDf.Student.TOTAL_MARKS].loc[assessment]
-    earned_marks = marks_df.loc[MarksDf.Student.EARNED_MARKS].loc[assessment]
-    title = assessment.split(SpecialChars.PARENT_CHILD_CHAR)[-1]
-    embed.description = f"## {title}\n## {SpecialChars.ZERO_WIDTH}{SpecialChars.WIDE_SPACE}"
-    embed.description += get_marks_out_of(earned_marks, total_marks, dummy_url)
-    # children marks
-    for col in marks_df.columns[1:]:
-        child_total_marks = marks_df.loc[MarksDf.Student.TOTAL_MARKS].loc[col]
-        child_earned_marks = marks_df.loc[MarksDf.Student.EARNED_MARKS].loc[col]
-        name = col.split(SpecialChars.PARENT_CHILD_CHAR)[-1]
-        value = get_marks_out_of(child_earned_marks, child_total_marks, dummy_url)
-        if not value.strip():
-            continue
-        value = f"{SpecialChars.ZERO_WIDTH}{2 * SpecialChars.WIDE_SPACE}{value}"
-        embed.add_field(name, value)
-    # add footer (optional)
-    import urllib.parse
-    dummy_url = f"https://dummy.url/{urllib.parse.quote(assessment)}"
-    # embed.set_author(name=SpecialChars.ZERO_WIDTH, url=dummy_url)
-    embed.url = dummy_url
-    embed.set_footer(
-        text=f"{student_id}{SpecialChars.WIDE_SPACE}{student_name}", icon=hikari.UnicodeEmoji("#️⃣")
-    )
-    return embed

@@ -15,11 +15,11 @@ def has_info_passed_before() -> bool:
         return False
     with open(FilePath.VALID_TOML) as fp:
         passed = tomlkit.load(fp)
-    # matches all values with previously passed toml file
-    if all(state.info[key] == passed[key] for key in state.info):
+    # match all values with previously passed toml file
+    if all(state.info[key] == passed[key] for key in state.info if key != InfoKey.MARKS_BUTTONS):
         log = "Check complete! Values match previously passed valid toml."
         print(FormatText.success(log))
-        # update valid toml file (e.g. comments)
+        # update valid toml file (e.g. comments and button ids)
         with open(FilePath.VALID_TOML, "w") as fp:
             tomlkit.dump(state.info, fp)
         return True
@@ -50,7 +50,7 @@ def check_and_load_info() -> None:
     load_sections()
     pull_from_enrolment()
     load_marks_sections()
-    ... # TODO: actually load marks
+    ...  # TODO: actually load marks
     push_marks_section_to_enrolment()
 
 
