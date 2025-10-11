@@ -53,12 +53,16 @@
 # Dev Notes
 ## How to update [`info.toml`](./info.toml) file pattern in `git`
 - Don't track changes in the file:
-    ```bash
+    ```sh
     git update-index --skip-worktree info.toml
     ```
 - Track changes in the file again:
-    ```bash
+    ```sh
     git update-index --no-skip-worktree info.toml
+    ```
+- Ignore all current local chances and fetch the latest github code
+    ```sh
+    git fetch --all; git reset --hard origin/main
     ```
 ## Python debugging
 - Run in debug mode with no optimization level:
