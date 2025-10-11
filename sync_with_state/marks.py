@@ -6,7 +6,6 @@ from wrappers.pygs import get_sheet_data
 from wrappers.utils import FormatText
 
 
-# make the column headers unique
 def get_unique_headers(df: pd.DataFrame) -> list[str]:
     # TODO: change props_df.iloc[..] to func args
     props_rows = [
@@ -14,17 +13,19 @@ def get_unique_headers(df: pd.DataFrame) -> list[str]:
         MarksDf.ROW_NUM_PARENT_COL,
         MarksDf.ROW_NUM_THIS_COL,
     ]
-    props_df = df.iloc[props_rows]
+    props_df: pd.DataFrame = df.iloc[props_rows]
     col_num_to_header = dict(zip(props_df.iloc[2], props_df.columns))
-    for col in props_df.columns:
-        is_unique = props_df[col].iloc[0]
-        if is_unique != 1:
-            parent_col_num = props_df[col].iloc[1]
+    for i, col in enumerate(props_df.columns):
+        is_unique = props_df.iloc[0,i]
+        if not isinstance(is_unique, int) or is_unique != 1:
+            parent_col_num = props_df.iloc[1,i]
             parent_header = col_num_to_header[parent_col_num]
-            this_col_num = props_df[col].iloc[2]
+            this_col_num = props_df.iloc[2,i]
             new_header = f"{parent_header}{SpecialChars.PARENT_CHILD_CHAR}{col}"
             col_num_to_header[this_col_num] = new_header
     return col_num_to_header.values()
+        
+    
 
 
 def update_marks_section(sec: int) -> None:

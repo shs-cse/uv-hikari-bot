@@ -17,7 +17,9 @@ class ShowMarksView(miru.View):
         sec_role = state.sec_roles[sec][ClassType.THEORY]
         assessment_title = assessment.split(SpecialChars.PARENT_CHILD_CHAR)[-1]
         self.post_content = f"# {assessment_title.title()} Marks"
-        self.post_content += f"\n{sec_role.mention} Click the button below to show your marks."
+        self.post_content += f"\n{sec_role.mention} **Click the button** below to show your marks."
+        self.post_content += " If you can't see marks, [turn on your embed settings]"
+        self.post_content +=  "(https://rtech.support/meta/discord-embeds/)."
         self.post_content += f"\n{faculty_text}\n" if faculty_text else "\n"
         self.post_content += "\n-# New buttons will show up for you to see"
         self.post_content += " further breakdown of your marks. But they will be"

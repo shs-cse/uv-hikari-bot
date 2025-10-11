@@ -37,7 +37,7 @@ def create_marks_embed(student_id: int, student_name: str, marks_df: pd.DataFram
         child_earned_marks = marks_df.loc[MarksDf.Single.EARNED_MARKS].loc[col]
         name = col.split(SpecialChars.PARENT_CHILD_CHAR)[-1]
         value = get_marks_out_of(child_earned_marks, child_total_marks)
-        if 'Grace' in name and child_earned_marks == "" or child_earned_marks == 0:
+        if 'Grace' in name and (child_earned_marks == "" or child_earned_marks == 0):
             continue
         if not value.strip():
             continue
@@ -79,10 +79,11 @@ def create_marks_navigator(student: hikari.Member, assessment: str) -> nav.Navig
         log = "Marks is unpublished or Student was not found:"
         log += f" {marks_sec} > {student_id} > {assessment}."
         raise Exception(log)
+    # if __debug__: breakpoint()
     pages = [create_marks_nav_page(student, student_id, student_name, marks_df)]
     for col in marks_df.columns[1:]:
-        if marks_df.loc[MarksDf.Single.CHILDREN, col]:
-            child_df = fetch_marks(student_id, col, marks_sec)
-            pages.append(create_marks_nav_page(student, student_id, student_name, child_df))
+        # if marks_df.loc[MarksDf.Single.CHILDREN, col]:
+        child_df = fetch_marks(student_id, col, marks_sec)
+        pages.append(create_marks_nav_page(student, student_id, student_name, child_df))
     navigator = nav.NavigatorView(pages=pages, timeout=5)
     return navigator

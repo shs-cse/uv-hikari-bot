@@ -14,7 +14,7 @@
 - ~~git add `[marks_buttons]` in `info.toml`~~
 - ~~autocomplete fix~~
 - add `state.enrolment`
-- ~~long running operation loses ~40 sec heartbeat. consider `asyncio`~~
+- long running operation loses ~40 sec heartbeat. consider `asyncio`
 
 # Replace names at the very end
 - ~~Change all `FileName`s to `FilePath` variables~~

@@ -11,7 +11,7 @@
     ```
 - Install `uv` for `python` management (one line command):
     ```sh
-    command -v uv >/dev/null && echo "uv already installed!" || { curl -LsSf https://astral.sh/uv/install.sh | sh && grep -q "alias uvo=" ~/.bashrc || echo "alias uvo='PYTHONOPTIMIZE=2 uv'" >> ~/.bashrc; source ~/.bashrc; }
+    command -v uv >/dev/null && echo "uv already installed!" || curl -LsSf https://astral.sh/uv/install.sh | sh; grep -q "alias uvo=" ~/.bashrc || echo "alias uvo='PYTHONOPTIMIZE=2 uv'" >> ~/.bashrc; source ~/.bashrc
     ```
     <!-- or
     ```sh
