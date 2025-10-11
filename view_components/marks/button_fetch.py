@@ -46,8 +46,8 @@ class ShowMarksView(miru.View):
             section, assessment = self.button.custom_id.split(SpecialChars.MARKS_BUTTON_ID_SEP, 1)
             section = int(section)
             navigator = create_marks_navigator(ctx.member, assessment)
-            builder = await navigator.build_response_async(state.miru_client)
-            await builder.send_to_channel(ctx.channel_id)
+            builder = await navigator.build_response_async(state.miru_client, ephemeral=True)
+            await ctx.respond_with_builder(builder)
             state.miru_client.start_view(navigator)
         except Exception as err:
             log = "Something went wrong, can't fetch marks:"

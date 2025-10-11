@@ -1,7 +1,7 @@
 import json
 from bot_environment import state
 from bot_environment.config import InfoKey, EnrolmentSprdsht, MarksSprdsht, TemplateLink
-from sync_with_state.sheets import update_student_list, push_marks_section_to_enrolment
+from sync_with_state.sheets import update_student_list
 from wrappers.utils import FormatText, update_info_key
 from wrappers.pygs import Spreadsheet, Worksheet, WorksheetNotFound
 from wrappers.pygs import get_spreadsheet, copy_spreadsheet, get_sheet_by_name
@@ -82,14 +82,16 @@ def create_marks_spreadsheet(sec: int, group: list[int], email: str) -> Spreadsh
 
 
 # create a worksheet for the section marks in spreadsheet
-def get_or_create_marks_worksheet(spreadsheet: Spreadsheet, sec: int) -> Worksheet:
+def get_or_create_marks_worksheet(spreadsheet_obj_or_id: Spreadsheet, sec: int) -> Worksheet:
     try:  # success -> sec worksheet already exists
-        sec_sheet = get_sheet_by_name(spreadsheet, MarksSprdsht.SecXX.TITLE.format(sec))
+        sec_sheet = get_sheet_by_name(spreadsheet_obj_or_id, MarksSprdsht.SecXX.TITLE.format(sec))
     except WorksheetNotFound:
         # fail -> sec worksheet does not exist
         print(FormatText.status("Creating new worksheet..."))
-        template_sheet = get_sheet_by_name(spreadsheet, MarksSprdsht.SecXX.TITLE.format(0))
-        sec_sheet: Worksheet = template_sheet.copy_to(spreadsheet.id)  # type:ignore
+        template_sheet = get_sheet_by_name(
+            spreadsheet_obj_or_id, MarksSprdsht.SecXX.TITLE.format(0)
+        )
+        sec_sheet: Worksheet = template_sheet.copy_to(spreadsheet_obj_or_id.id)  # type:ignore
         sec_sheet.hidden = False
         sec_sheet.title = MarksSprdsht.SecXX.TITLE.format(sec)
         populate_marks_worksheet_with_student_id(sec_sheet, sec)
@@ -121,35 +123,3 @@ def populate_marks_worksheet_with_student_id(sec_sheet: Worksheet, sec: int) -> 
         start=start_cell,
         copy_index=True,
     )
-
-
-def load_marks_sections() -> None:
-    if not state.info[InfoKey.MARKS_ENABLED]:
-        return
-    # refresh all marks section column entry
-    state.students[EnrolmentSprdsht.Students.MARKS_SEC_COL] = 0
-    for sec in state.available_secs:
-        load_marks_section(sec)
-
-
-def load_marks_section(marks_sec: int) -> None:
-    for email, group in state.info["marks_groups"].items():
-        if marks_sec in group:
-            break
-    sec_sheet = check_marks_sheet(marks_sec, email, group)
-    # update both in state.students and enrolment
-    if state.students.empty:
-        return
-    start_cell = MarksSprdsht.SecXX.MARKS_DATA_START_CELL
-    end_cell = (sec_sheet.rows, MarksSprdsht.SecXX.COL_NUM_STUDENT_IDS)
-    student_ids = sec_sheet.get_as_df(start=start_cell, end=end_cell)
-    if student_ids.empty:
-        return
-    # update marks section in state.students
-    print(FormatText.wait(f"Updating student's marks section for section {marks_sec:02d} sheet..."))
-    is_student_in_sec_sheet = state.students.index.isin(student_ids.iloc[:, 0])
-    state.students.loc[is_student_in_sec_sheet, EnrolmentSprdsht.Students.MARKS_SEC_COL] = marks_sec
-    print(FormatText.status("Updated marks section in students dataframe."))
-    # also update marks section in enrolment sheet
-    push_marks_section_to_enrolment()
-    print(FormatText.success(f"Updated student's marks section for section {marks_sec:02d} sheet."))

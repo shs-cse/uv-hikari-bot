@@ -1,4 +1,4 @@
-import hikari, crescent, re
+import hikari, re
 from miru.ext import nav
 import pandas as pd
 from bot_environment import state
@@ -14,7 +14,7 @@ def get_marks_out_of(earned_marks: int | str, total_marks: int | str) -> str:
         text = f"[**{earned_marks}**]({dummy_url})"
         text += f"{SpecialChars.WIDE_SPACE}*out of*{SpecialChars.WIDE_SPACE}"
         text += f"{total_marks}"
-    elif "out of" in total_marks:  # likely text data, but contains out of
+    elif "out of" in str(total_marks):  # likely text data, but contains out of
         text = f"{earned_marks} {total_marks}"
     else:  # likely text data, print as it is
         text = f"{earned_marks}"
@@ -84,5 +84,5 @@ def create_marks_navigator(student: hikari.Member, assessment: str) -> nav.Navig
         if marks_df.loc[MarksDf.Single.CHILDREN, col]:
             child_df = fetch_marks(student_id, col, marks_sec)
             pages.append(create_marks_nav_page(student, student_id, student_name, child_df))
-    navigator = nav.NavigatorView(pages=pages, timeout=10)
+    navigator = nav.NavigatorView(pages=pages, timeout=5)
     return navigator

@@ -9,10 +9,10 @@
 - ~~do something about `LAB_A/B` vs `LAB`. may be new toml key?~~
     - ~~current solution is debug dependent... `uv->LAB` & `uvo->LAB_A/B`~~
 - add `state.enrolment`
-- instead of `load_marks_section`, do `load_marks`
-    - use `update_marks` in the process?
-    - define `update_marks_section`
-- git add `[marks_buttons]` in `info.toml`
+- ~~instead of `load_marks_section`, do `load_marks`~~
+    - ~~use `update_marks` in the process?~~
+    - ~~define `update_marks_section`~~
+- ~~git add `[marks_buttons]` in `info.toml`~~
 - ~~autocomplete fix~~
 
 # Replace names at the very end

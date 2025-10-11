@@ -1,21 +1,9 @@
 import pandas as pd
 from bot_environment import state
 from bot_environment.config import InfoKey, MarksSprdsht, SpecialChars, EnrolmentSprdsht, MarksDf
+from sync_with_state.sheets import push_marks_section_to_enrolment
 from wrappers.pygs import get_sheet_data
 from wrappers.utils import FormatText
-
-
-def update_marks_data(sec: int) -> None:
-    df = get_sheet_data(
-        state.info[InfoKey.MARKS_SHEET_IDS][str(sec)],
-        MarksSprdsht.SecXX.TITLE.format(sec),
-        start=MarksSprdsht.SecXX.HEADER_START_CELL,
-    )
-    df = df.set_index(MarksSprdsht.SecXX.STUDENT_ID_COL)
-    is_col_published = df.iloc[MarksDf.ROW_NUM_PUBLISH_STATUS] == 1
-    df = df.loc[:, is_col_published]
-    df.columns = get_unique_headers(df)
-    state.published_marks[sec] = df
 
 
 # make the column headers unique
@@ -37,6 +25,40 @@ def get_unique_headers(df: pd.DataFrame) -> list[str]:
             new_header = f"{parent_header}{SpecialChars.PARENT_CHILD_CHAR}{col}"
             col_num_to_header[this_col_num] = new_header
     return col_num_to_header.values()
+
+
+def update_marks_section(sec: int) -> None:
+    print(FormatText.wait(f"Updating student's marks section for section {sec:02d} sheet..."))
+    marks_df = state.published_marks[sec]
+    student_ids = marks_df.iloc[MarksDf.ROW_NUM_DATA_START + 1 :].index
+    student_ids = [x for x in student_ids if isinstance(x,int)]
+    state.students.loc[student_ids, EnrolmentSprdsht.Students.MARKS_SEC_COL] = sec
+    print(FormatText.status("Updated marks section in students dataframe."))
+    push_marks_section_to_enrolment()
+    print(FormatText.success(f"Updated student's marks section for section {sec:02d} sheet."))
+
+
+def update_marks_data(sec: int) -> None:
+    marks_df = get_sheet_data(
+        state.info[InfoKey.MARKS_SHEET_IDS][str(sec)],
+        MarksSprdsht.SecXX.TITLE.format(sec),
+        start=MarksSprdsht.SecXX.HEADER_START_CELL,
+    )
+    marks_df = marks_df.set_index(MarksSprdsht.SecXX.STUDENT_ID_COL)
+    is_col_published = marks_df.iloc[MarksDf.ROW_NUM_PUBLISH_STATUS] == 1
+    marks_df = marks_df.loc[:, is_col_published]
+    marks_df.columns = get_unique_headers(marks_df)
+    state.published_marks[sec] = marks_df
+    update_marks_section(sec)
+    
+    
+def load_marks_data() -> None:
+    if not state.info[InfoKey.MARKS_ENABLED]:
+        return
+    # refresh all marks section column entry
+    state.students[EnrolmentSprdsht.Students.MARKS_SEC_COL] = 0
+    for sec in state.available_secs:
+        update_marks_data(sec)
 
 
 def fetch_marks(student_id: int, assessment: str, sec: int = 0) -> pd.DataFrame | None:

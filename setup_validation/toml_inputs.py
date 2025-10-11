@@ -5,8 +5,8 @@ from bot_environment import state
 from setup_validation.google_sheets import check_google_credentials, check_enrolment_sheet
 from setup_validation.google_sheets import check_routine_sheet, check_student_tutor_sheet
 from setup_validation.marks import check_marks_enabled, check_marks_groups_and_sheets
-from setup_validation.marks import load_marks_sections
-from sync_with_state.sheets import pull_from_enrolment, push_marks_section_to_enrolment
+from sync_with_state.marks import load_marks_data
+from sync_with_state.sheets import pull_from_enrolment
 from wrappers.utils import FormatText, update_info_key
 
 
@@ -49,9 +49,7 @@ def check_and_load_info() -> None:
     # always load after checked
     load_sections()
     pull_from_enrolment()
-    load_marks_sections()
-    ...  # TODO: actually load marks
-    push_marks_section_to_enrolment()
+    load_marks_data()
 
 
 # check functions may access state but can't update it
