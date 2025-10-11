@@ -1,4 +1,3 @@
-import hikari
 from bot_environment import state
 from bot_environment.config import RoleName, ClassType
 from setup_validation.discord_sec import check_or_create_discord_sec

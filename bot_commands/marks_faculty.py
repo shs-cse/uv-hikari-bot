@@ -1,10 +1,10 @@
-import hikari, crescent, re
+import hikari, crescent, re, asyncio
 from bot_environment import state
 from bot_environment.config import InfoKey, RolePermissions, ClassType
 from bot_environment.config import RegexPattern, EnrolmentSprdsht, SpecialChars
 from sync_with_state.marks import update_marks_data
 from wrappers.utils import FormatText
-from view_components.marks.button_fetch import ShowMarksView
+from view_components.marks.button_to_show import ShowMarksView
 from view_components.marks.embed_and_nav import create_marks_navigator
 
 
@@ -54,7 +54,7 @@ class UpdateMarks:
             log = f"Can't update marks for section {self.section:02d}"
             log += " beacuase you are not the theory faculty."
         else:
-            update_marks_data(self.section)
+            await asyncio.to_thread(update_marks_data, self.section)
             log = f"Updated marks data for section {self.section:02d}."
         await ctx.respond(log)
 
@@ -149,7 +149,7 @@ class PostMarksButton:
 
     faculty_text = crescent.option(
         str,
-        name="text",
+        name="add-text",
         description="Bot will auto add main text. But if you want to add more, input here.",
         default="",
     )

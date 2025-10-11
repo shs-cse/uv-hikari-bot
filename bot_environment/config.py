@@ -234,7 +234,15 @@ class MarksSprdsht:
 
     class SecXX:
         TITLE = "Sec {:02d}"
+        # unique spreadsheet columns for grades
         STUDENT_ID_COL = "Student Id"
+        GRADE_COL = "Grade"
+        THEORY_COL = "Theory"
+        LAB_COL = "Lab"
+        ASSIGNMENT_COL = "Assignment"
+        QUIZ_COL = "Quiz"
+        MIDTERM_UNSCALED_COL = "Midterm\u066d"
+        FINAL_UNSCALED_COL = "Final\u066d"
         # sheet row/col number
         COL_NUM_STUDENT_IDS = 2
         ROW_NUM_HEADER = 3

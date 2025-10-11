@@ -6,7 +6,7 @@ from wrappers.pygs import get_sheet_by_name
 from wrappers.utils import FormatText
 from view_components.student_verification.modal_and_button import VerificationButtonView
 from view_components.faculty_verification.assign_sec_button import AssignSectionsButtonView
-from view_components.marks.button_fetch import ShowMarksView
+from view_components.marks.button_to_show import ShowMarksView
 
 plugin = crescent.Plugin[hikari.GatewayBot, None]()
 

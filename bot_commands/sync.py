@@ -1,4 +1,4 @@
-import hikari, crescent
+import hikari, crescent, asyncio
 from bot_environment import state
 from bot_environment.config import InfoKey, RolePermissions
 from sync_with_state.sheets import update_routine, pull_from_enrolment, push_to_enrolment
@@ -14,8 +14,8 @@ bot_admin_sync_group = crescent.Group("sync", default_member_permissions=RolePer
 @crescent.command(name="enrolment")
 async def sync_enrolment(ctx: crescent.Context) -> None:
     await ctx.defer(ephemeral=True)
-    pull_from_enrolment()
-    push_to_enrolment()
+    await asyncio.to_thread(pull_from_enrolment)
+    await asyncio.to_thread(push_to_enrolment)
     enrolment_link = get_link_from_sheet_id(state.info[InfoKey.ENROLMENT_SHEET_ID])
     log = f"Synced [Enrolment sheet]({enrolment_link})."
     log += " Updated student list, routine and discord list."
@@ -27,7 +27,7 @@ async def sync_enrolment(ctx: crescent.Context) -> None:
 @crescent.command(name="routine")
 async def sync_routine(ctx: crescent.Context) -> None:
     await ctx.defer(ephemeral=True)
-    update_routine()
+    await asyncio.to_thread(update_routine)
     enrolment_link = get_link_from_sheet_id(state.info[InfoKey.ENROLMENT_SHEET_ID])
     log = f"Updated routine from [Enrolment sheet]({enrolment_link})."
     await ctx.respond(log)

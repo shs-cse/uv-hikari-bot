@@ -1,7 +1,10 @@
+# Create Discord Bot/Application account (First Time)
+- Different from your personal accounts. Go to Discord's dev portal and create a new application.
+- Take note of the bot token (secret, but can be regenerated if leaked).
 # Setup Local PC (First Time)
 - Install GitBash if on windows
-- ssh stuff
-
+- ssh stuff. You may skip creating new username (just use root)
+- For more details, go to https://github.com/shs-cse/discord-bot/
 
 
 # Setup Droplet (First Time)
@@ -37,21 +40,43 @@
     ```sh
     cp ../creds-folder/*.json ./
     ```
-- Run bot
+- Use `tmux` to run the bot in a background window.
+    ```sh
+    tmux new -A
+    ```
+- Run the bot
     ```sh
     uvo run main.py
     ```
     - Equivalent to `uv run python -OO main.py`
+- Detach (minimize) the tmux window by pressing <kbd>Ctrl</kbd>+<kbd>B</kbd> and then <kbd>D</kbd>.
 
-# Setup Bot
-- Invite bot to server (installation link looks like this):
-    `
-    https://discord.com/oauth2/authorize?client_id=...
-    `
-- Give [`@bot`](.) role to the bot
+# Add Bot to Discord (New Semester)
+- Invite bot to server
+    - Discord dev portal > Select bot/application > Installation
+        - **Install link** > Select **"Discord Provided Link"**. Installation link looks like this: 
+        ```
+        https://discord.com/oauth2/authorize?client_id=.......
+        ```
+    - Give it proper **Scopes**: `application.commands`, `bot` 
+    - Give it proper **Permissions**: `Administrator`, `Use Slash Command`
+- Go to the installation link, and select which server the bot will be added to.
+- After Bot has joined the server, give [`@bot`](.) role to the bot.
 
-# Dev Notes
-## How to update [`info.toml`](./info.toml) file pattern in `git`
+---
+
+## Dev Notes
+### Inspect Code output
+- If your using `tmux` then, navigate using:
+    - Either attach or new tmux session
+        ```sh
+        tmux new -A
+        ```
+    - <kbd>Ctrl</kbd>+<kbd>B</kbd> and then press: 
+        - <kbd>[</kbd> to enter scroll mode (then navigate)
+        - <kbd>Q</kbd> to exit scroll mode
+        - <kbd>D</kbd> to detach tmux session
+### Update [`info.toml`](./info.toml) file template in `git`
 - Don't track changes in the file:
     ```sh
     git update-index --skip-worktree info.toml
@@ -64,7 +89,7 @@
     ```sh
     git fetch --all; git reset --hard origin/main
     ```
-## Python debugging
+### Python debugging
 - Run in debug mode with no optimization level:
     ```sh
     uv run main.py

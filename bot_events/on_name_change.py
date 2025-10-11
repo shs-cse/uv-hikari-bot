@@ -5,6 +5,7 @@ from wrappers.utils import FormatText
 
 plugin = crescent.Plugin[hikari.GatewayBot, None]()
 
+
 @plugin.include
 @crescent.event
 async def on_faculty_guild_nickname_change(event: hikari.MemberUpdateEvent) -> None:
@@ -27,4 +28,3 @@ async def on_faculty_guild_nickname_change(event: hikari.MemberUpdateEvent) -> N
     # faculty.nickname = new_name # bug fix hack
     print(FormatText.status(log))
     await try_faculty_verification(faculty)
-    

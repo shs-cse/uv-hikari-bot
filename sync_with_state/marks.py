@@ -16,16 +16,14 @@ def get_unique_headers(df: pd.DataFrame) -> list[str]:
     props_df: pd.DataFrame = df.iloc[props_rows]
     col_num_to_header = dict(zip(props_df.iloc[2], props_df.columns))
     for i, col in enumerate(props_df.columns):
-        is_unique = props_df.iloc[0,i]
+        is_unique = props_df.iloc[0, i]
         if not isinstance(is_unique, int) or is_unique != 1:
-            parent_col_num = props_df.iloc[1,i]
+            parent_col_num = props_df.iloc[1, i]
             parent_header = col_num_to_header[parent_col_num]
-            this_col_num = props_df.iloc[2,i]
+            this_col_num = props_df.iloc[2, i]
             new_header = f"{parent_header}{SpecialChars.PARENT_CHILD_CHAR}{col}"
             col_num_to_header[this_col_num] = new_header
     return col_num_to_header.values()
-        
-    
 
 
 def update_marks_section(sec: int) -> None:

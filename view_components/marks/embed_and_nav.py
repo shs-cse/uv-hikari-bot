@@ -80,9 +80,13 @@ def create_marks_navigator(student: hikari.Member, assessment: str) -> nav.Navig
         log += f" {marks_sec} > {student_id} > {assessment}."
         raise Exception(log)
     pages = [create_marks_nav_page(student, student_id, student_name, marks_df)]
+    any_child_has_breakdown = False
     for col in marks_df.columns[1:]:
-        # if marks_df.loc[MarksDf.Single.CHILDREN, col]:
+        if marks_df.loc[MarksDf.Single.CHILDREN, col]:
+            any_child_has_breakdown = True
         child_df = fetch_marks(student_id, col, marks_sec)
         pages.append(create_marks_nav_page(student, student_id, student_name, child_df))
-    navigator = nav.NavigatorView(pages=pages, timeout=5)
+    if not any_child_has_breakdown:
+        pages = [pages[0]]
+    navigator = nav.NavigatorView(pages=pages, timeout=15)
     return navigator
