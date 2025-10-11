@@ -79,7 +79,6 @@ def create_marks_navigator(student: hikari.Member, assessment: str) -> nav.Navig
         log = "Marks is unpublished or Student was not found:"
         log += f" {marks_sec} > {student_id} > {assessment}."
         raise Exception(log)
-    # if __debug__: breakpoint()
     pages = [create_marks_nav_page(student, student_id, student_name, marks_df)]
     for col in marks_df.columns[1:]:
         # if marks_df.loc[MarksDf.Single.CHILDREN, col]:
