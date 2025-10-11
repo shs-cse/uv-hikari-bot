@@ -1,6 +1,6 @@
-import hikari, crescent
+import hikari, crescent, asyncio
 from bot_environment import state
-from bot_environment.config import InfoKey, RolePermissions, PluginPathName
+from bot_environment.config import InfoKey, RolePermissions
 from setup_validation.marks import check_marks_groups_and_sheets
 from sync_with_state.marks import load_marks_data
 from wrappers.utils import update_info_key
@@ -22,10 +22,11 @@ async def marks_enable(ctx: crescent.Context) -> None:
         log = "Marks feature is already enabled."
     else:
         update_info_key(InfoKey.MARKS_ENABLED, True)
-        check_marks_groups_and_sheets()
-        load_marks_data()
+        await plugin.app.update_presence(status=hikari.Status.IDLE)
+        await asyncio.to_thread(check_marks_groups_and_sheets)
+        await asyncio.to_thread(load_marks_data)
+        await plugin.app.update_presence(status=hikari.Status.ONLINE)
         log = "Marks feature has been enabled."
-        log += " All previously published marks has to be republished by faculties."
     await ctx.respond(log)
 
 
@@ -46,6 +47,5 @@ async def marks_disable(ctx: crescent.Context) -> None:
         update_info_key(InfoKey.MARKS_ENABLED, False)
         for sec in state.available_secs:
             state.published_marks[sec] = None
-        plugin.client.plugins.unload(PluginPathName.MARKS_FACULTY)
         log = "Marks feature has been disabled."
     await ctx.respond(log)

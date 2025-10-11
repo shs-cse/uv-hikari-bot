@@ -1,6 +1,6 @@
 import hikari, crescent
 import pandas as pd
-from bot_commands.marks_faculty import marks_assessment_choices
+from bot_commands.marks_faculty import exit_if_marks_is_disabled, marks_assessment_choices
 from bot_environment import state
 from bot_environment.config import RolePermissions, EnrolmentSprdsht
 from sync_with_state.marks import fetch_marks
@@ -10,7 +10,9 @@ plugin = crescent.Plugin[hikari.GatewayBot, None]()
 
 
 bot_admin_fetch_group = crescent.Group(
-    "fetch", default_member_permissions=RolePermissions.BOT_ADMIN
+    "fetch",
+    default_member_permissions=RolePermissions.BOT_ADMIN,
+    hooks=[exit_if_marks_is_disabled],
 )
 
 

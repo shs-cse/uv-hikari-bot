@@ -8,12 +8,13 @@
 - ~~must fix `marks_groups`, may not be json complient~~
 - ~~do something about `LAB_A/B` vs `LAB`. may be new toml key?~~
     - ~~current solution is debug dependent... `uv->LAB` & `uvo->LAB_A/B`~~
-- add `state.enrolment`
 - ~~instead of `load_marks_section`, do `load_marks`~~
     - ~~use `update_marks` in the process?~~
     - ~~define `update_marks_section`~~
 - ~~git add `[marks_buttons]` in `info.toml`~~
 - ~~autocomplete fix~~
+- add `state.enrolment`
+- ~~long running operation loses ~40 sec heartbeat. consider `asyncio`~~
 
 # Replace names at the very end
 - ~~Change all `FileName`s to `FilePath` variables~~

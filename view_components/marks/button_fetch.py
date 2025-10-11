@@ -20,7 +20,8 @@ class ShowMarksView(miru.View):
         self.post_content += f"\n{sec_role.mention} Click the button below to show your marks."
         self.post_content += f"\n{faculty_text}\n" if faculty_text else "\n"
         self.post_content += "\n-# New buttons will show up for you to see"
-        self.post_content += " further breakdown of your marks."
+        self.post_content += " further breakdown of your marks. But they will be"
+        self.post_content += " only active for 5 seconds after you press the buttons."
         # update toml info if needed
         if assessment not in state.info[InfoKey.MARKS_BUTTONS][str(sec)]:
             all_custom_ids = state.info[InfoKey.MARKS_BUTTONS].copy()  # for comparison
@@ -38,6 +39,10 @@ class ShowMarksView(miru.View):
 
     async def show_marks_button(self, ctx: miru.ViewContext) -> None:
         await ctx.defer(flags=hikari.MessageFlag.EPHEMERAL)
+        if not state.info[InfoKey.MARKS_ENABLED]:
+            log = "Marks feature is disabled. This command is currently unavailable."
+            await ctx.respond(log, flags=hikari.MessageFlag.EPHEMERAL)
+            return
         if ctx.member.get_top_role() != state.student_role:
             log = "Can't show marks because you are not a verified student."
             await ctx.respond(log, flags=hikari.MessageFlag.EPHEMERAL)
