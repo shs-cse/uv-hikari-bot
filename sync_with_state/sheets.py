@@ -28,7 +28,6 @@ def update_routine() -> None:
     print(FormatText.success("Updated routine dataframe successfully."))
 
 
-# TODO[old]: why not update df_marks_section? like sync.sheets.pull?
 def update_student_list() -> None:
     # fetch student list from
     print(FormatText.wait("Updating enrolled student list dataframe..."))
@@ -45,20 +44,6 @@ def update_student_list() -> None:
     state.students = state.students.set_index(EnrolmentSprdsht.Students.STUDENT_ID_COL)
     state.students = state.students[state.students.index > 0]
     print(FormatText.success("Updated enrolled student list dataframe successfully."))
-
-    # TODO: this parts need to change...
-    # # for tracking which student's mark is in which section's sheet
-    # state.df_marks_sec_lookup = state.students[[EnrolmentSprdsht.Students.DISCORD_ID_COL]]
-    # # add a new column to track which section contains that student's marks
-    # state.df_marks_sec_lookup.insert(1, EnrolmentSprdsht.Students.VIRTUAL_MARKS_SEC_COL, 0)
-    # state.df_marks_sec_lookup.set_index([state.df_marks_sec_lookup.index,
-    #                                      EnrolmentSprdsht.Students.DISCORD_ID_COL], inplace=True)
-    # TODO[old]: separate func to update df_marks_section. what if marks updates?
-
-    # # fetch routine data
-    # print(FormatText.wait("Updating routine dataframe..."))
-    # state.df_routine = get_sheet_data(enrolment_id, EnrolmentSprdsht.Routine.TITLE)
-    # print(FormatText.wait("Updated routine dataframe."))
 
 
 def push_marks_section_to_enrolment() -> None:

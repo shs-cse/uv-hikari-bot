@@ -31,7 +31,7 @@ def update_marks_section(sec: int) -> None:
     print(FormatText.wait(f"Updating student's marks section for section {sec:02d} sheet..."))
     marks_df = state.published_marks[sec]
     student_ids = marks_df.iloc[MarksDf.ROW_NUM_DATA_START + 1 :].index
-    student_ids = [x for x in student_ids if isinstance(x,int)]
+    student_ids = [x for x in student_ids if isinstance(x, int)]
     state.students.loc[student_ids, EnrolmentSprdsht.Students.MARKS_SEC_COL] = sec
     print(FormatText.status("Updated marks section in students dataframe."))
     push_marks_section_to_enrolment()
@@ -50,8 +50,8 @@ def update_marks_data(sec: int) -> None:
     marks_df.columns = get_unique_headers(marks_df)
     state.published_marks[sec] = marks_df
     update_marks_section(sec)
-    
-    
+
+
 def load_marks_data() -> None:
     if not state.info[InfoKey.MARKS_ENABLED]:
         return

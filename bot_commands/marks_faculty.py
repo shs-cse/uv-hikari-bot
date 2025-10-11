@@ -79,9 +79,7 @@ async def marks_assessment_by_student_autocomplete_callback(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> list[tuple[str, str]]:
     try:
-        member = state.guild.get_member(
-            int(ctx.options["student"])
-        )  # TODO: generalize this FetchMarks class variable
+        member = state.guild.get_member(int(ctx.options["student"])) # FetchMaks class variable
         if member.get_top_role() != state.student_role:
             return []
         _, marks_sec = extract_student_id_and_marks_sec(member)
@@ -117,15 +115,13 @@ class FetchMarks:
         except Exception as log:
             print(FormatText.error(log))
             await ctx.respond("Something went wrong, can't fetch marks.")
-            
-            
 
 
 async def marks_assessment_by_section_autocomplete_callback(
     ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> list[tuple[str, str]]:
     try:
-        section = int(ctx.options["section"])
+        section = int(ctx.options["section"]) # PostMarksButton class variable
         if section not in state.available_secs:
             return []
         return marks_assessment_choices(section, option.value)
