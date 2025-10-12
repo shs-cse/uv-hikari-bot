@@ -31,12 +31,12 @@ def update_routine() -> None:
 def update_student_list() -> None:
     # fetch student list from
     print(FormatText.wait("Updating enrolled student list dataframe..."))
-    state.students = get_sheet_data(
+    students_sheet = get_sheet_by_name(
         state.info[InfoKey.ENROLMENT_SHEET_ID],
         EnrolmentSprdsht.Students.TITLE,
-        numerize=False,
-        empty_value=None,
     )
+    students_sheet.clear(EnrolmentSprdsht.Students.MARKS_SEC_RANGE)
+    state.students = students_sheet.get_as_df(numerize=False, empty_value=None)
     for col, dtype in EnrolmentSprdsht.Students.DF_DTYPE.items():
         if dtype is int:  # to avoid df.astype raising errors with None
             state.students[col] = state.students[col].fillna(0)

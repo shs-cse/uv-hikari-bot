@@ -193,6 +193,7 @@ class EnrolmentSprdsht:
         ADVISING_DISCORD_ID_COL = "Discord Id (Adv. Verified)"
         DISCORD_ID_COL = "Discord Id"
         MARKS_SEC_COL = "Marks Section"
+        MARKS_SEC_RANGE = "H2"
         DF_DTYPE = {
             STUDENT_ID_COL: int,
             NAME_COL: str,
