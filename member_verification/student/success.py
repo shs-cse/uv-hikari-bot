@@ -28,10 +28,12 @@ async def assign_student_section_roles(
     if not existing_sec_roles:
         for role in roles_to_assign:
             await student.add_role(role)
-    elif (
-        len(existing_sec_roles) != 2  # may have manually assigned roles
-        or state.sec_roles[section][ClassType.THEORY] not in existing_sec_roles
+    elif (  # may have manually assigned roles (e.g. lab change)
+        len(existing_sec_roles) == 3 # @student + @sec-theory + @sec-lab-manually-assigned
+        and state.sec_roles[section][ClassType.THEORY] in existing_sec_roles
     ):
+        return existing_sec_roles
+    else:
         for role in existing_sec_roles:
             await student.remove_role(role)
         for role in roles_to_assign:
