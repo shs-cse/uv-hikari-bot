@@ -2,10 +2,8 @@ import hikari, re
 from bot_environment import state
 from bot_environment.config import EnrolmentSprdsht, RegexPattern
 from member_verification.faculty.check import try_faculty_verification
-from member_verification.response import Response, VerificationFailure
-from member_verification.student.failure import check_if_student_id_is_already_taken
-from member_verification.student.success import verify_student
-from wrappers.utils import FormatText
+from member_verification.response import Response
+from member_verification.student.check import try_student_verification
 
 
 async def try_member_auto_verification(member: hikari.Member) -> Response:
@@ -18,15 +16,11 @@ async def try_member_auto_verification(member: hikari.Member) -> Response:
         student_id = state.students[ADVISING_DISCORD_ID_COL] == str(member.id)
         student_id = state.students.index[student_id][0]
     elif state.student_role == member.get_top_role():
+        # already verified before, expects correct nickname pattern
         student_id = int(re.search(RegexPattern.MEMBER_INITIAL, member.display_name).group(1))
+    else:
+        student_id = 0
     if not student_id:
         log = f"Auto-verification was not possible for {member.mention} {member.display_name}."
         return Response(log)
-    try:
-        check_if_student_id_is_already_taken(member, student_id)
-        return await verify_student(member, student_id)
-    except VerificationFailure as failure:
-        log = f"Advising Server Verified Member {member.mention} {member.display_name}"
-        log += f" joined course server; but student id {student_id} already taken someone else."
-        print(FormatText.warning(log))
-        return failure.response
+    return await try_student_verification(member, str(student_id))

@@ -1,4 +1,5 @@
 import hikari, re
+from bot_environment import state
 from bot_environment.config import RegexPattern
 from member_verification.response import Response, VerificationFailure
 from member_verification.student.success import verify_student
@@ -36,9 +37,12 @@ async def try_student_verification(
         check_if_student_id_is_already_taken(member, student_id)
         # 4. id is valid and in the sheet, but discord does not match with advising server id
         #       response with buttons (you sure?)
-        await check_if_matches_advising_server(member, student_id)
+        if member.get_top_role() != state.student_role: # skip if verified before
+            await check_if_matches_advising_server(member, student_id)
         # 5. (success) id is valid and in the sheet, 
         #       but no discord id in advising server/matches with advising id
         return await verify_student(member, student_id)
     except VerificationFailure as failure:
+        if member.get_top_role() == state.student_role:
+            await member.remove_role(state.student_role)
         return failure.response
