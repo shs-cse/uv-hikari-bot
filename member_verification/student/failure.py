@@ -66,7 +66,7 @@ async def check_if_matches_advising_server(member:hikari.Member, student_id:int)
     advising_id = state.students.loc[student_id, ADVISING_DISCORD_ID_COL]
     if not advising_id: # not in our advising database
         return
-    if member.id in state.students[ADVISING_DISCORD_ID_COL]:
+    if str(member.id) in state.students[ADVISING_DISCORD_ID_COL]:
         conflict_id = state.students[state.students[ADVISING_DISCORD_ID_COL] == member.id]
         conflict_name = state.students.loc[conflict_id, NAME_COL]
         student_name = state.students.loc[student_id, NAME_COL]
