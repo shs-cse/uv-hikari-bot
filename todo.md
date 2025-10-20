@@ -16,6 +16,7 @@
 - add `state.enrolment`
 - ~~long running operation loses ~40 sec heartbeat. consider `asyncio`~~
 - bulk delete doesn't delete theory categories (apparently)
+- student id extraction same code repeated multiple times
 
 # Replace names at the very end
 - ~~Change all `FileName`s to `FilePath` variables~~
