@@ -14,8 +14,9 @@ async def try_member_auto_verification(member: hikari.Member) -> Response:
         return response
     # try verifying by advising discord server id
     ADVISING_DISCORD_ID_COL = EnrolmentSprdsht.Students.ADVISING_DISCORD_ID_COL
-    if member.id in state.students[ADVISING_DISCORD_ID_COL]:
-        student_id = state.students[state.students[ADVISING_DISCORD_ID_COL] == member.id]
+    if str(member.id) in state.students[ADVISING_DISCORD_ID_COL].values:
+        student_id = state.students[ADVISING_DISCORD_ID_COL] == str(member.id)
+        student_id = state.students.index[student_id][0]
         try:
             check_if_student_id_is_already_taken(member, student_id)
             return await verify_student(member, student_id)
