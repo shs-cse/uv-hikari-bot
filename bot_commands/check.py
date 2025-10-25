@@ -109,7 +109,7 @@ class VerifyMemberWithAdvisingServer:
             response = await try_member_auto_verification(self.member)
         except Exception as error:
             response = get_generic_verification_error_response(error, try_member_auto_verification)
-            log = "Member Verification: raised an error while trying to verify member on join:"
+            log = "Member Verification: raised error while trying to verify member automatically:"
             log += f" {self.member.mention} {self.member.display_name}."
             print(FormatText.error(log))
         await ctx.respond(**response)
@@ -127,7 +127,7 @@ async def auto_verify_all_members(ctx: crescent.Context) -> None:
         try:
             await try_member_auto_verification(member)
         except Exception:
-            log = "Member Verification: raised an error while trying to verify member on join:"
+            log = "Member Verification: raised error while trying to verify member automatically:"
             log += f" {member.mention} {member.display_name}."
             print(FormatText.error(log))
     await ctx.respond("Verified as many members as possible.")

@@ -44,5 +44,6 @@ async def try_student_verification(
         return await verify_student(member, student_id)
     except VerificationFailure as failure:
         if member.get_top_role() == state.student_role:
-            await member.remove_role(state.student_role)
+            for role in member.get_roles():
+                await member.remove_role(role)
         return failure.response

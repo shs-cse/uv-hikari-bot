@@ -18,6 +18,6 @@ async def check_member(ctx: crescent.Context, member: hikari.Member) -> None:
     except Exception as error:
         response = get_generic_verification_error_response(error, try_member_auto_verification)
         log = "Member Verification: raised an error while trying to"
-        log += f" verify member on join: {member.mention} {member.display_name}."
+        log += f" verify member automatically: {member.mention} {member.display_name}."
         print(FormatText.error(log))
     await ctx.respond(**response)
