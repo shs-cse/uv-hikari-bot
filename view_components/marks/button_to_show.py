@@ -23,10 +23,15 @@ class ShowMarksButton(miru.Button):
         self.custom_id = get_custom_id(sec, assessment)
         self.assessment = assessment
         # update toml info if needed
-        if assessment not in state.info[InfoKey.MARKS_BUTTONS][str(sec)]:
-            all_custom_ids = state.info[InfoKey.MARKS_BUTTONS].copy()  # for comparison
-            all_custom_ids[str(sec)] = [*all_custom_ids[str(sec)], assessment]  # NOTE: don't append
-            update_info_key(InfoKey.MARKS_BUTTONS, all_custom_ids)
+        if str(sec) not in state.info[InfoKey.MARKS_BUTTONS]:
+            posted_assessments = []
+        else:
+            posted_assessments = state.info[InfoKey.MARKS_BUTTONS][str(sec)]
+            if assessment in posted_assessments:
+                return
+        all_custom_ids = state.info[InfoKey.MARKS_BUTTONS].copy()  # for comparison
+        all_custom_ids[str(sec)] = [*posted_assessments, assessment]  # NOTE: don't append
+        update_info_key(InfoKey.MARKS_BUTTONS, all_custom_ids)
 
     async def callback(self, ctx: miru.ViewContext) -> None:
         # await ctx.defer(flags=hikari.MessageFlag.EPHEMERAL)
