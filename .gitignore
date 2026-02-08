@@ -13,3 +13,4 @@ wheels/
 *.json
 info*.toml
 dev.py
+.DS_Store

@@ -124,10 +124,10 @@ class ChannelName:
             ClassType.LAB_A: SpecialChars.WIDE_SPACE.join(("Section", "{:02d} A", "Lab")),
             ClassType.LAB_B: SpecialChars.WIDE_SPACE.join(("Section", "{:02d} B", "Lab")),
         }
-    else:  # TODO: change below, currently set like this for old servers
+    else:
         SECTION_CATEGORY = {
-            ClassType.THEORY: "SECTION {:02d} THEORY",
-            ClassType.LAB: "SECTION {:02d} LAB",
+            ClassType.THEORY: SpecialChars.WIDE_SPACE.join(("Section", "{:02d}", "Theory")),
+            ClassType.LAB: SpecialChars.WIDE_SPACE.join(("Section", "{:02d}", "Lab")),
         }
 
 
