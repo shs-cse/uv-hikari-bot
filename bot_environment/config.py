@@ -21,7 +21,7 @@ class SpecialChars:
 
 
 class ClassType:
-    _IS_SUBCLASSED = True
+    _IS_SUBCLASSED = False
     THEORY = "theory"
     LAB = "lab"
     LAB_A = "lab_a"
