@@ -1,6 +1,7 @@
-import tomlkit
+import tomlkit, os, tempfile
 from bot_environment import state
 from bot_environment.config import FilePath
+
 
 class FormatText:
     """
@@ -57,15 +58,27 @@ class FormatText:
         return f"{FormatText.BOLD}{text}{FormatText.DIM_BOLD_RESET}"
 
 
-def update_info_key(key: str, new_value) -> None: # noqa:ANN001
+def update_info_key(key: str, new_value) -> None:  # noqa:ANN001
     old_value = state.info[key]
     if old_value == new_value:
         return
     state.info[key] = new_value
     info_toml_path = FilePath.INFO_TOML
-    with open(info_toml_path, 'w') as fp:
-        tomlkit.dump(state.info, fp)
-        log = f'{info_toml_path} > "{key}": updated...\n'
-        log += FormatText.dim(f'\t- {"from:":>8}  {old_value}\n')
-        log += FormatText.bold(f'\t+ {"to:":>8}  {new_value}')
-        print(FormatText.warning(log))
+
+    # Write to a temp file and then replace toml file
+    directory = os.path.dirname(os.path.abspath(info_toml_path)) or "."
+    fd, tmp_path = tempfile.mkstemp(dir=directory, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w") as fp:
+            tomlkit.dump(state.info, fp)
+            fp.flush()
+            os.fsync(fp.fileno())
+        os.replace(tmp_path, info_toml_path)  # atomic on POSIX and Windows
+    except Exception:
+        os.remove(tmp_path)
+        raise
+
+    log = f'{info_toml_path} > "{key}": updated...\n'
+    log += FormatText.dim(f"\t- {'from:':>8}  {old_value}\n")
+    log += FormatText.bold(f"\t+ {'to:':>8}  {new_value}")
+    print(FormatText.warning(log))
